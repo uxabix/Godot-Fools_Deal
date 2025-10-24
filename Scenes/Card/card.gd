@@ -10,7 +10,7 @@ class_name Card
 # ------------------------------------------------------------------------------
 
 # Preload definitions containing enums and helper utilities for suits/ranks
-const cd = preload("res://Scripts/Defines/card_defines.gd")
+const cd = preload("res://Scripts/Utils/card_defines.gd")
 
 # ------------------------------------------------------------------------------
 # Exported Properties

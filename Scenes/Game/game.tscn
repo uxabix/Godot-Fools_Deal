@@ -27,7 +27,7 @@ metadata/_edit_use_anchors_ = true
 scale = Vector2(0.75, -0.75)
 
 [node name="HandContainer7" parent="CanvasLayer/EnemyContainer/EnemyHandContainer" instance=ExtResource("4_i1e5p")]
-position = Vector2(384, 0)
+position = Vector2(307.2, 0)
 appearance = ExtResource("5_flgk0")
 
 [node name="PreviewTrump2" parent="CanvasLayer/EnemyContainer/EnemyHandContainer/HandContainer7" instance=ExtResource("1_mv0hc")]
@@ -76,8 +76,58 @@ suit = 1
 rank = 11
 animate = true
 
+[node name="HandContainer8" parent="CanvasLayer/EnemyContainer/EnemyHandContainer" instance=ExtResource("4_i1e5p")]
+position = Vector2(614.4, 0)
+appearance = ExtResource("5_flgk0")
+
+[node name="PreviewTrump2" parent="CanvasLayer/EnemyContainer/EnemyHandContainer/HandContainer8" instance=ExtResource("1_mv0hc")]
+position = Vector2(-62.5, -20)
+rotation = -0.43633232
+is_face_up = false
+suit = 3
+animate = true
+
+[node name="PreviewTrump3" parent="CanvasLayer/EnemyContainer/EnemyHandContainer/HandContainer8" instance=ExtResource("1_mv0hc")]
+position = Vector2(-37.5, -43.51141)
+rotation = -0.2617994
+is_face_up = false
+suit = 1
+rank = 9
+animate = true
+
+[node name="PreviewTrump4" parent="CanvasLayer/EnemyContainer/EnemyHandContainer/HandContainer8" instance=ExtResource("1_mv0hc")]
+position = Vector2(-12.5, -58.04226)
+rotation = -0.08726646
+is_face_up = false
+suit = 2
+rank = 2
+animate = true
+
+[node name="PreviewTrump5" parent="CanvasLayer/EnemyContainer/EnemyHandContainer/HandContainer8" instance=ExtResource("1_mv0hc")]
+position = Vector2(12.5, -58.04226)
+rotation = 0.08726646
+is_face_up = false
+rank = 3
+animate = true
+
+[node name="PreviewTrump7" parent="CanvasLayer/EnemyContainer/EnemyHandContainer/HandContainer8" instance=ExtResource("1_mv0hc")]
+position = Vector2(37.5, -43.51141)
+rotation = 0.2617994
+is_face_up = false
+suit = 3
+rank = 4
+animate = true
+
+[node name="PreviewTrump8" parent="CanvasLayer/EnemyContainer/EnemyHandContainer/HandContainer8" instance=ExtResource("1_mv0hc")]
+position = Vector2(62.5, -20)
+rotation = 0.43633232
+is_face_up = false
+suit = 1
+rank = 11
+animate = true
+
 [node name="HandContainer10" parent="CanvasLayer/EnemyContainer/EnemyHandContainer" instance=ExtResource("4_i1e5p")]
-position = Vector2(768, 0)
+position = Vector2(921.6, 0)
 appearance = ExtResource("5_flgk0")
 
 [node name="PreviewTrump2" parent="CanvasLayer/EnemyContainer/EnemyHandContainer/HandContainer10" instance=ExtResource("1_mv0hc")]
@@ -127,7 +177,7 @@ rank = 11
 animate = true
 
 [node name="HandContainer11" parent="CanvasLayer/EnemyContainer/EnemyHandContainer" instance=ExtResource("4_i1e5p")]
-position = Vector2(1152, 0)
+position = Vector2(1228.8, 0)
 appearance = ExtResource("5_flgk0")
 
 [node name="PreviewTrump2" parent="CanvasLayer/EnemyContainer/EnemyHandContainer/HandContainer11" instance=ExtResource("1_mv0hc")]

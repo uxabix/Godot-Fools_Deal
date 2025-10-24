@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://bl26c2y57d6rm"]
+[gd_scene load_steps=3 format=3 uid="uid://bl26c2y57d6rm"]
 
 [ext_resource type="Script" uid="uid://dnjsldcwkkugp" path="res://Scenes/Menu/menu.gd" id="1_cqskg"]
+[ext_resource type="Theme" uid="uid://vyc3q0ut21h3" path="res://Assets/Themes/Default_text.tres" id="2_3ymnh"]
 
 [node name="Menu" type="Node2D"]
 script = ExtResource("1_cqskg")
@@ -27,30 +28,31 @@ color = Color(0.176419, 0.176419, 0.176419, 1)
 [node name="AspectRatioContainer" type="AspectRatioContainer" parent="CanvasLayer/Control"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.25
+anchor_left = 0.35
 anchor_top = 0.15
-anchor_right = 0.75
+anchor_right = 0.65
 anchor_bottom = 0.85
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="FlowContainer" type="FlowContainer" parent="CanvasLayer/Control/AspectRatioContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Control/AspectRatioContainer"]
 layout_mode = 2
-size_flags_horizontal = 4
+theme_override_constants/separation = 10
 alignment = 1
-vertical = true
 
-[node name="Play Button" type="Button" parent="CanvasLayer/Control/AspectRatioContainer/FlowContainer"]
+[node name="Play Button" type="Button" parent="CanvasLayer/Control/AspectRatioContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 4
+theme = ExtResource("2_3ymnh")
 theme_override_font_sizes/font_size = 50
 text = "PLAY"
 
-[node name="Exit Button" type="Button" parent="CanvasLayer/Control/AspectRatioContainer/FlowContainer"]
+[node name="Exit Button" type="Button" parent="CanvasLayer/Control/AspectRatioContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 4
+theme = ExtResource("2_3ymnh")
 theme_override_font_sizes/font_size = 50
 text = "EXIT"
 
-[connection signal="pressed" from="CanvasLayer/Control/AspectRatioContainer/FlowContainer/Play Button" to="." method="_on_play_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/Control/AspectRatioContainer/FlowContainer/Exit Button" to="." method="_on_exit_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/Control/AspectRatioContainer/VBoxContainer/Play Button" to="." method="_on_play_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/Control/AspectRatioContainer/VBoxContainer/Exit Button" to="." method="_on_exit_button_pressed"]

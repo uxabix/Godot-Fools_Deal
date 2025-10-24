@@ -1,3 +1,4 @@
+@abstract
 class_name RulesetBase
 extends Resource
 
@@ -5,14 +6,29 @@ extends Resource
 # Base class defining the core rules for different game modes.
 # Provides methods for attack, defense, and transfer conditions.
 ##
-const cd = preload("res://Scripts/Defines/card_defines.gd")
+const cd = preload("res://Scripts/Utils/card_defines.gd")
 
-@export var name: String = "Classic 36 cards"   ## Name of the rule set
-@export var cards_in_hand: int = 6              ## Number of cards each player starts with
-@export var translated_mode: bool = false       ## Whether the mode supports card transfers
-@export var use_jokers: bool = false            ## Whether jokers are included
-@export var suits: Array[cd.Suit] = cd.ALL_SUITS
-@export var ranks: Array[cd.Rank] = cd.ALL_RANKS.slice(4)
+var name: String = "Classic"            ## Name of the rule set
+var cards_in_hand: int = 6              ## Number of cards each player starts with
+var translated_mode: bool = false       ## Whether the mode supports card transfers
+var use_jokers: bool = false            ## Whether jokers are included
+var suits: Array[cd.Suit] = cd.ALL_SUITS
+var ranks: Array[cd.Rank]
+
+var min_players: int = 2 ## Minimal count of players to start a game
+
+var common_options: CommonOptions
+var utils: Resource = RulesetUtilsBase
+
+
+func init_basics(cards_count: int = 36, players_count: int = 1, bot_count: int = 1) -> void:
+	ranks = utils.get_ranks(cards_count)
+	common_options = CommonOptions.new(cards_count, players_count, bot_count)
+	
+
+func _init(cards_count: int = 36, players_count: int = 1, bot_count: int = 1) -> void:
+	if players_count + bot_count < min_players: return
+	init_basics(cards_count)
 
 
 ##

@@ -4,11 +4,11 @@ extends Node
 # Central game manager responsible for controlling
 # the main game state, players, rules, and deck operations.
 ##
-const cd = preload("res://Scripts/Defines/card_defines.gd")
+const cd = preload("res://Scripts/Utils/card_defines.gd")
 
 var trump: cd.Suit = cd.Suit.DIAMONDS          ## Current trump suit for the game
-var ruleset: RulesetBase = preload("res://Scripts/Logic/Rulesets/ClassicRuleset.gd").new()  ## Active game ruleset
-var deck: Deck = Deck.new()                    ## Main deck used in the current game
+var ruleset: RulesetBase = preload("res://Scripts/Logic/Rulesets/Variants/ClassicRuleset.gd").new()  ## Active game ruleset
+var deck: Deck                                 ## Main deck used in the current game
 var discard_pile: DiscardPile                  ## Pile for discarded cards
 var players: Array[Player] = []                ## List of all players (human and bots)
 var current_player: Player
@@ -37,11 +37,9 @@ func notify_players_trump():
 # Initializes players, deck, ruleset, and deals cards.
 ##
 func start_game() -> void:
-	set_players(1, 4)
+	set_players(ruleset.common_options.players_count, ruleset.common_options.bot_count)
 	current_player = players[0]
-	self.ruleset = ruleset
-	deck = Deck.new()
-	deck.init(ruleset)
+	deck = Deck.new(ruleset)
 	trump = deck.get_first().suit
 	notify_players_trump()
 	discard_pile = DiscardPile.new()

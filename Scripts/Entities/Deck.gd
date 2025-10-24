@@ -9,7 +9,7 @@ class_name Deck
 var cards: Array[CardData] = []
 
 # Initializes the deck based on a ruleset
-func init(ruleset):
+func _init(ruleset):
 	cards.clear()
 	for suit in ruleset.suits:
 		for rank in ruleset.ranks:

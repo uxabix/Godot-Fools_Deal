@@ -1,0 +1,122 @@
+[gd_scene load_steps=3 format=3 uid="uid://bqdbe6mlcrvig"]
+
+[ext_resource type="Script" uid="uid://dligx35kj3oby" path="res://Scenes/SessionSettings/session_settings.gd" id="1_w4464"]
+[ext_resource type="Theme" uid="uid://vyc3q0ut21h3" path="res://Assets/Themes/Default_text.tres" id="2_kcqop"]
+
+[node name="SessionSettings" type="Node2D"]
+script = ExtResource("1_w4464")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer/Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.176419, 0.176419, 0.176419, 1)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Control"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.4
+anchor_top = 0.1
+anchor_right = 0.6
+anchor_bottom = 0.9
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="ErrorLabel" type="Label" parent="CanvasLayer/Control/VBoxContainer"]
+visible = false
+custom_minimum_size = Vector2(250, 50)
+layout_mode = 2
+theme = ExtResource("2_kcqop")
+theme_override_colors/font_color = Color(1, 0.29000002, 0.29000002, 1)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 40
+text = "Data error"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Row1" type="HBoxContainer" parent="CanvasLayer/Control/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Control/VBoxContainer/Row1"]
+layout_mode = 2
+
+[node name="CardsLabel" type="Label" parent="CanvasLayer/Control/VBoxContainer/Row1/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("2_kcqop")
+theme_override_font_sizes/font_size = 40
+text = "Cards"
+
+[node name="CardsOptions" type="OptionButton" parent="CanvasLayer/Control/VBoxContainer/Row1/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 4
+theme = ExtResource("2_kcqop")
+theme_override_font_sizes/font_size = 40
+selected = 0
+item_count = 3
+popup/item_0/text = "24"
+popup/item_0/id = 0
+popup/item_1/text = "36"
+popup/item_1/id = 1
+popup/item_2/text = "52"
+popup/item_2/id = 2
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="CanvasLayer/Control/VBoxContainer/Row1"]
+layout_mode = 2
+
+[node name="PlayersLabel" type="Label" parent="CanvasLayer/Control/VBoxContainer/Row1/VBoxContainer2"]
+layout_mode = 2
+theme = ExtResource("2_kcqop")
+theme_override_font_sizes/font_size = 40
+text = "Players"
+
+[node name="PlayersOptions" type="OptionButton" parent="CanvasLayer/Control/VBoxContainer/Row1/VBoxContainer2"]
+layout_mode = 2
+theme = ExtResource("2_kcqop")
+theme_override_font_sizes/font_size = 40
+selected = 0
+item_count = 5
+popup/item_0/text = "2"
+popup/item_0/id = 0
+popup/item_1/text = "3"
+popup/item_1/id = 1
+popup/item_2/text = "4"
+popup/item_2/id = 2
+popup/item_3/text = "5"
+popup/item_3/id = 3
+popup/item_4/text = "6"
+popup/item_4/id = 4
+
+[node name="TransferableCheckBox" type="CheckBox" parent="CanvasLayer/Control/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("2_kcqop")
+text = "Transferable"
+
+[node name="Play Button" type="Button" parent="CanvasLayer/Control/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 4
+theme = ExtResource("2_kcqop")
+theme_override_font_sizes/font_size = 50
+text = "START"
+
+[connection signal="pressed" from="CanvasLayer/Control/VBoxContainer/Play Button" to="." method="_on_play_button_pressed"]

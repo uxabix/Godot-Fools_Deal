@@ -6,7 +6,7 @@ class_name Player
 # Holds player-related data such as hand, state, and strategy.
 ##
 
-const cd = preload("res://Scripts/Defines/card_defines.gd")
+const cd = preload("res://Scripts/Utils/card_defines.gd")
 
 var player_name: String                 ## Player display name
 var id                                  ## Player unique identifier
