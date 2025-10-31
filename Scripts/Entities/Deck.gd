@@ -7,6 +7,7 @@ class_name Deck
 ##
 
 var cards: Array[CardData] = []
+var trump: CardData;
 
 # Initializes the deck based on a ruleset
 func _init(ruleset):
@@ -18,14 +19,11 @@ func _init(ruleset):
 			card.rank = rank
 			cards.append(card)
 	cards.shuffle()
+	trump = cards[0]
 
 # Draws the top card from the deck
 func draw_card() -> CardData:
 	return null if cards.is_empty() else cards.pop_back() 
-
-# Returns first card in deck (Trump in classical rules)
-func get_first() -> CardData:
-	return null if cards.is_empty() else cards[0]
 
 # Shuffles the deck
 func shuffle() -> void:

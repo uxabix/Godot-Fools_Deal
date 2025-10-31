@@ -136,6 +136,12 @@ static func get_rank_name(rank: Rank) -> String:
 		Rank.ACE: return "Ace"
 		_: return ""  # Numeric cards return an empty string by default
 
+static func get_suit_image(suit: Suit) -> String:
+	return "res://Assets/Textures/Cards/Suits/" + get_suit_name(suit) + "/Suit.png"
+
+static func get_rank_image(suit: Suit, rank: Rank) -> String:
+	return "res://Assets/Textures/Cards/Suits/" + get_suit_name(suit) + "/Ranks/" + get_rank_name(rank) + ".png"
+
 # -----------------------------------------------------------------------------
 # Constants for Visual Assets
 # -----------------------------------------------------------------------------

@@ -1,6 +1,9 @@
 extends Control
 
 
+# Preload definitions containing enums and helper utilities for suits/ranks
+const cd = preload("res://Scripts/Utils/card_defines.gd")
+
 # Reference to the scene representing a single card (used to instantiate deck cards)
 @export var card_scene: PackedScene
 
@@ -12,21 +15,21 @@ extends Control
 # Removes all existing cards and trump visuals from the deck container
 func clear_deck() -> void:
 	for child in $TrumpContainer.get_children():
-		child.queue_free()
+		if child is Card:
+			child.queue_free()
 	for child in $CardsContainer.get_children():
-		child.queue_free()
+		if child is Card:
+			child.queue_free()
 
-# Updates the deck display based on the provided Deck object
-func update_deck(deck: Deck) -> void:
-	clear_deck()
-	# Update deck card count label
-	$CardsCount.text = str(deck.size())
-
-	# Create and display the trump card (top of the deck)
+func update_trump(deck: Deck) -> void:
+	$TrumpContainer/TrumpSuit.texture = load(cd.get_suit_image(deck.trump.suit))
+	if len(deck.cards) <= 0:
+		return
 	var trump := card_scene.instantiate()
-	trump.init(deck.get_first())
+	trump.init(deck.trump)
 	$TrumpContainer.add_child(trump)
 
+func update_cards(deck: Deck) -> void:
 	# Visually stack the remaining cards with slight offset and rotation
 	var angle := 0.0
 	var pos := 0.0
@@ -42,6 +45,20 @@ func update_deck(deck: Deck) -> void:
 		$CardsContainer.add_child(card)
 		card.rotation = angle
 		card.position = Vector2(pos, pos)
+
+# Updates the deck display based on the provided Deck object
+func update_deck(deck: Deck) -> void:
+	clear_deck()
+	# Update deck card count label
+	$CardsCount.text = str(deck.size()) if deck.size() != 0 else ""
+
+	# Create and display the trump card (top of the deck)
+	update_trump(deck)
+	
+	if len(deck.cards) <= 0:
+		return
+	update_cards(deck)
+
 
 
 # Called when the node enters the scene tree for the first time.

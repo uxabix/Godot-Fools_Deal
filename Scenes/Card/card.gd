@@ -60,8 +60,7 @@ func flip() -> void:
 func set_textures() -> void:
 	# Update all small suit icons
 	for i in $Front/Suits.get_children():
-		i.texture = load("res://Assets/Textures/Cards/Suits/"
-			+ cd.get_suit_name(suit) + "/Suit.png")
+		i.texture = load(cd.get_suit_image(suit))
 
 	# Determine if the rank has a dedicated image (e.g., Jack, Queen, King)
 	$Front/Images/Rank.visible = rank in cd.HAS_TEXTURE
@@ -69,16 +68,13 @@ func set_textures() -> void:
 
 	if $Front/Images/Rank.visible:
 		# Load and display the dedicated rank image
-		$Front/Images/Rank.texture = load("res://Assets/Textures/Cards/Suits/"
-			+ cd.get_suit_name(suit) + "/Ranks/"
-			+ cd.get_rank_name(rank) + ".png")
+		$Front/Images/Rank.texture = load(cd.get_rank_image(suit, rank))
 	else:
 		# Use pattern overlay when rank has no dedicated texture
 		var i := 0
 		for image in $Front/Images/Suits.get_children():
 			image.visible = cd.patterns[rank][i]
-			image.texture = load("res://Assets/Textures/Cards/Suits/"
-				+ cd.get_suit_name(suit) + "/Suit.png")
+			image.texture = load(cd.get_suit_image(suit))
 			i += 1
 
 

@@ -40,7 +40,7 @@ func start_game() -> void:
 	set_players(ruleset.common_options.players_count, ruleset.common_options.bot_count)
 	current_player = players[0]
 	deck = Deck.new(ruleset)
-	trump = deck.get_first().suit
+	trump = deck.trump.suit
 	notify_players_trump()
 	discard_pile = DiscardPile.new()
 

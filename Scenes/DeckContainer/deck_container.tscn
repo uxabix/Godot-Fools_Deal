@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://bqc61ptdaq64p"]
+[gd_scene load_steps=6 format=3 uid="uid://bqc61ptdaq64p"]
 
 [ext_resource type="Script" uid="uid://cpyqe4ehxxm5r" path="res://Scenes/DeckContainer/deck_container.gd" id="1_61wbx"]
 [ext_resource type="FontFile" uid="uid://g6hwsrh5md1m" path="res://Assets/Fonts/OldNewspaperTypes-Regular.ttf" id="1_lwjw5"]
 [ext_resource type="PackedScene" uid="uid://dxr7phpxd7qol" path="res://Scenes/Card/card.tscn" id="2_61wbx"]
+[ext_resource type="Texture2D" uid="uid://left37rfalru" path="res://Assets/Textures/Cards/Suits/Hearts/Suit.png" id="4_0gvnl"]
 
 [sub_resource type="Theme" id="Theme_i1e5p"]
 default_font = ExtResource("1_lwjw5")
@@ -26,7 +27,7 @@ anchors_preset = -1
 anchor_left = 0.229
 anchor_right = 0.234
 offset_left = -16.848
-offset_right = 39.152
+offset_right = 38.432007
 offset_bottom = 62.0
 theme = SubResource("Theme_i1e5p")
 text = "36"
@@ -44,6 +45,11 @@ grow_vertical = 0
 rotation = 1.5707964
 mouse_filter = 1
 metadata/_edit_use_anchors_ = true
+
+[node name="TrumpSuit" type="Sprite2D" parent="TrumpContainer"]
+rotation = -1.5707964
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("4_0gvnl")
 
 [node name="PreviewTrump" parent="TrumpContainer" instance=ExtResource("2_61wbx")]
 rank = 8
