@@ -9,6 +9,9 @@ class_name GameTable
 # - Initializing the game state and player UI references.
 # ------------------------------------------------------------------------------
 
+# Preload definitions containing enums and helper utilities for suits/ranks
+const cd = preload("res://Scripts/Utils/card_defines.gd")
+
 @export var player_card_appearance: CardAppearanceData = preload("res://Scripts/Entities/Resources/CardAppearance/Variants/Player.tres")
 @export var enemy_card_appearance: CardAppearanceData = preload("res://Scripts/Entities/Resources/CardAppearance/Variants/Enemy.tres")
 @export var hand_container: PackedScene = preload("res://Scenes/HandContainer/HandContainer.tscn")
@@ -47,6 +50,18 @@ func draw_players():
 		draw_cards(hand)
 		
 
+func test_table_container() -> void:
+	var cardAttack = CardData.new()
+	cardAttack.rank = cd.Rank.TEN
+	cardAttack.suit = cd.Suit.DIAMONDS
+	var cardDefense = CardData.new()
+	cardDefense.rank = cd.Rank.KING
+	cardDefense.suit = cd.Suit.SPADES
+	
+	for i in range(3):
+		$CanvasLayer/Control/TableContainer.add_attack(cardAttack)
+		$CanvasLayer/Control/TableContainer.add_defense(i, cardDefense)
+
 # Called once when the node enters the scene tree
 func _ready() -> void:
 	UiManager.remove_preview_nodes(self)
@@ -55,7 +70,8 @@ func _ready() -> void:
 	UiManager.player_hand = $CanvasLayer/PlayerHand/HandContainer
 	$CanvasLayer/PlayerHand/HandContainer.set_cards(GameManager.current_player.hand, player_card_appearance)
 	draw_players()
-
+	
+	test_table_container()
 
 # Called every frame (currently unused)
 func _process(_delta: float) -> void:

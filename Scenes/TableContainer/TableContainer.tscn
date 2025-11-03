@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://b5ltsa1oucaxe"]
+
+[ext_resource type="Script" uid="uid://dprq5axr1ch" path="res://Scenes/TableContainer/TableContainer.gd" id="1_jw566"]
+
+[node name="TableContainer" type="Node2D"]
+script = ExtResource("1_jw566")
+card_scene = null
+
+[node name="AttackContainer" type="Node2D" parent="."]
+
+[node name="DefenseContainer" type="Node2D" parent="."]

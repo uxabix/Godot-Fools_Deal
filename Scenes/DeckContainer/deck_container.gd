@@ -5,7 +5,7 @@ extends Control
 const cd = preload("res://Scripts/Utils/card_defines.gd")
 
 # Reference to the scene representing a single card (used to instantiate deck cards)
-@export var card_scene: PackedScene
+@export var card_scene: PackedScene = preload("res://Scenes/Card/card.tscn")
 
 
 # ------------------------------------------------------------------------------
