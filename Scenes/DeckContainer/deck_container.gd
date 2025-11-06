@@ -25,7 +25,8 @@ func update_trump(deck: Deck) -> void:
 	$TrumpContainer/TrumpSuit.texture = load(cd.get_suit_image(deck.trump.suit))
 	if len(deck.cards) <= 0:
 		return
-	var trump := card_scene.instantiate()
+	var trump: Card = card_scene.instantiate()
+	trump.collision = false
 	trump.init(deck.trump)
 	$TrumpContainer.add_child(trump)
 

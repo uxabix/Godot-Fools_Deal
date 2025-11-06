@@ -84,18 +84,18 @@ func update_layout() -> void:
 		var pos_y = -row_offset / 2.0 if row == 0 else row_offset / 2.0
 		# Attack card
 		if pair["attack"]:
-			var attack_card = card_scene.instantiate()
+			var attack_card: Card = card_scene.instantiate()
+			attack_card.collision = false
 			attack_card.init(pair["attack"])
 			attack_card.position = Vector2(pos_x, pos_y)
 			attack_card.rotation = -get_random_rotation(min_rotation, max_rotation)
-			print("A ", attack_card.rotation)
 			$AttackContainer.add_child(attack_card)
 
 		# Defense card
 		if pair["defense"]:
 			var defense_card = card_scene.instantiate()
+			defense_card.collision = false
 			defense_card.init(pair["defense"])
 			defense_card.position = Vector2(pos_x + defense_offset, pos_y + defense_offset)
 			defense_card.rotation = get_random_rotation(min_rotation, max_rotation)
-			print("D ", defense_card.rotation)
 			$DefenseContainer.add_child(defense_card)
