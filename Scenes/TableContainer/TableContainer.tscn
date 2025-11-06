@@ -4,7 +4,6 @@
 
 [node name="TableContainer" type="Node2D"]
 script = ExtResource("1_jw566")
-card_scene = null
 
 [node name="AttackContainer" type="Node2D" parent="."]
 

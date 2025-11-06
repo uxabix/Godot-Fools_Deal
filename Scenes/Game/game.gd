@@ -58,7 +58,7 @@ func test_table_container() -> void:
 	cardDefense.rank = cd.Rank.KING
 	cardDefense.suit = cd.Suit.SPADES
 	
-	for i in range(3):
+	for i in range(6):
 		$CanvasLayer/Control/TableContainer.add_attack(cardAttack)
 		$CanvasLayer/Control/TableContainer.add_defense(i, cardDefense)
 

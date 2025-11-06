@@ -304,6 +304,5 @@ grow_vertical = 2
 
 [node name="TableContainer" parent="CanvasLayer/Control" instance=ExtResource("7_vifcx")]
 scale = Vector2(0.95, 0.95)
-card_scene = ExtResource("1_mv0hc")
 card_spacing = 125.0
 row_offset = 150.0

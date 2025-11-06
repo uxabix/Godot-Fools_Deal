@@ -8,6 +8,8 @@ class_name TableContainer
 @export var card_spacing: float = 120.0
 @export var row_offset: float = 80.0
 @export var defense_offset: float = 20.0
+@export var max_rotation: float = 5 # Maximum card rotation in degrees
+@export var min_rotation: float = -2 # Maximum card rotation in degrees
 
 const MAX_PAIRS := 6
 
@@ -54,6 +56,10 @@ func calc_x(index: int, count: int) -> float:
 	var total_width = (count - 1) * card_spacing
 	return -total_width / 2.0 + index * card_spacing
 
+func get_random_rotation(min_rotation: float, max_rotation: float) -> float:
+	var random_degrees = randf_range(min_rotation, max_rotation)
+	return deg_to_rad(random_degrees)
+
 
 func update_layout() -> void:
 	if not is_inside_tree():
@@ -76,12 +82,13 @@ func update_layout() -> void:
 		var count_in_row =  first_row_count if row == 0 else second_row_count
 		var pos_x = calc_x(index_in_row, count_in_row)
 		var pos_y = -row_offset / 2.0 if row == 0 else row_offset / 2.0
-
 		# Attack card
 		if pair["attack"]:
 			var attack_card = card_scene.instantiate()
 			attack_card.init(pair["attack"])
 			attack_card.position = Vector2(pos_x, pos_y)
+			attack_card.rotation = -get_random_rotation(min_rotation, max_rotation)
+			print("A ", attack_card.rotation)
 			$AttackContainer.add_child(attack_card)
 
 		# Defense card
@@ -89,4 +96,6 @@ func update_layout() -> void:
 			var defense_card = card_scene.instantiate()
 			defense_card.init(pair["defense"])
 			defense_card.position = Vector2(pos_x + defense_offset, pos_y + defense_offset)
+			defense_card.rotation = get_random_rotation(min_rotation, max_rotation)
+			print("D ", defense_card.rotation)
 			$DefenseContainer.add_child(defense_card)
