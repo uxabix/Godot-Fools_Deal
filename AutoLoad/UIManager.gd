@@ -5,12 +5,34 @@ extends Node
 # Manages UI-related behaviors such as hover detection
 # and collision activation for cards in the player's hand.
 ##
-var card_hovered = null:
+var card_hovered = null: # Index of selected card in hand
 	set(value):
 		card_hovered = value
 		set_collisions()
-
+var is_dragging: bool = false # Flag indicates if player dragging a card
+		
 var player_hand: HandContainer ## Reference to the player's HandContainer scene
+
+var i = 1
+var dragging_just_started = 0
+var selected_card: Node2D
+func _input(event: InputEvent) -> void:
+	if selected_card and Input.is_action_just_released("LMB"):
+		selected_card.stop_animation()
+		dragging_just_started = 0
+		selected_card = null
+		is_dragging = false
+		card_hovered = null
+		player_hand.update_layout()
+	if event is InputEventMouseMotion and Input.is_action_pressed("LMB"):
+		if card_hovered == null: return
+		is_dragging = true
+		selected_card = player_hand.get_child(card_hovered)
+		selected_card.position += event.relative
+		selected_card.play_animation("Dragging")
+		if dragging_just_started == 0:
+			player_hand.update_layout()
+			dragging_just_started = 1
 
 
 # ------------------------------------------------------------------------------

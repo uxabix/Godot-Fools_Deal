@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://dxr7phpxd7qol"]
+[gd_scene load_steps=13 format=3 uid="uid://dxr7phpxd7qol"]
 
 [ext_resource type="Texture2D" uid="uid://d3xvjfuuljgo0" path="res://Assets/Textures/Cards/Front.png" id="1_pedkj"]
 [ext_resource type="Script" uid="uid://bqt8o8scntu57" path="res://Scenes/Card/card.gd" id="1_yw1pg"]
@@ -69,8 +69,38 @@ tracks/1/keys = {
 "values": [0]
 }
 
+[sub_resource type="Animation" id="Animation_j6efv"]
+resource_name = "Dragging"
+length = 2.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1, 2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0.3, 0.3), Vector2(0.29, 0.29), Vector2(0.3, 0.3)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:z_index")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [1]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_j6efv"]
 _data = {
+&"Dragging": SubResource("Animation_j6efv"),
 &"Hover": SubResource("Animation_r5dc4"),
 &"RESET": SubResource("Animation_rffhp")
 }

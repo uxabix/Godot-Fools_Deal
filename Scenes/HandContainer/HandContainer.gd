@@ -54,35 +54,63 @@ func _deferred_update_layout() -> void:
 # ------------------------------------------------------------------------------
 
 # Evenly arranges all child card nodes in a curved, fan-like layout.
+# If UIManager.is_dragging is true and UIManager.card_hovered points to an index,
+# the layout is computed as if that child was removed (i.e. for count-1 cards).
 func update_layout() -> void:
 	var count := get_child_count()
 	if count == 0:
 		return
 
-	var total_width := (count - 1) * appearance.spacing
+	# Determine whether we should ignore one child (the one being dragged)
+	var ignore_index := -1
+	var effective_count := count
+
+	if UIManager.is_dragging and UIManager.card_hovered != null \
+	 and UIManager.card_hovered >= 0 and UIManager.card_hovered < count:
+		ignore_index = int(UIManager.card_hovered)
+		effective_count = max(0, count - 1)
+
+	# If nothing to ignore, layout normally
+	if effective_count <= 0:
+		return
+
+	# Recompute geometry using effective_count (treating dragged card as absent)
+	var total_width := (effective_count - 1) * appearance.spacing
 	var start_x := -total_width * 0.5
 	var center_y := appearance.vertical_offset
-	var center_index := (count - 1) / 2.0
+	var center_index := (effective_count - 1) / 2.0
 
 	var angle_step := 0.0
 	if appearance.fan_angle != 0.0:
-		angle_step = deg_to_rad(appearance.fan_angle) / max(count - 1, 1)
+		angle_step = deg_to_rad(appearance.fan_angle) / max(effective_count - 1, 1)
 
+	# Iterate physical children but map them into virtual indices that skip the ignored one.
+	# virtual_index runs from 0..effective_count-1
+	var virtual_index := 0
 	for i in range(count):
-		var node := get_child(i)
-		if not node is Node2D:
+		# If this child is the one being dragged and should be ignored — skip it
+		if i == ignore_index:
 			continue
 
-		# Calculate card position
-		var pos_x := start_x + i * appearance.spacing
-		var offset: float = (i - center_index) / center_index if center_index != 0 else 0.0
+		var node := get_child(i)
+		if not node is Card:
+			# keep virtual_index consistent: skip non-node children without incrementing layout index
+			continue
+
+		# Compute position based on virtual_index (0..effective_count-1)
+		var pos_x := start_x + virtual_index * appearance.spacing
+
+		var offset: float = 0.0
+		if center_index != 0:
+			offset = (virtual_index - center_index) / center_index
+
 		var pos_y: float = center_y + appearance.y_spacing * -cos(offset * PI * 0.5)
 		var target_pos := Vector2(pos_x, pos_y)
 
-		# Calculate rotation to create the fan effect
+		# Calculate rotation to create the fan effect (based on virtual index)
 		var target_rot := 0.0
 		if appearance.fan_angle != 0.0 and center_index != 0:
-			target_rot = -deg_to_rad(appearance.fan_angle) * 0.5 + i * angle_step
+			target_rot = -deg_to_rad(appearance.fan_angle) * 0.5 + virtual_index * angle_step
 
 		# Apply animation or direct placement
 		if appearance.animate:
@@ -93,6 +121,7 @@ func update_layout() -> void:
 			node.position = target_pos
 			node.rotation = target_rot
 
+		virtual_index += 1
 
 # ------------------------------------------------------------------------------
 # Utility Functions

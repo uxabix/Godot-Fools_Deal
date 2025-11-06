@@ -107,6 +107,16 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	pass
 
+func play_animation(animation_name: String, backwards: bool = false) -> void:
+	if backwards:
+		$AnimationPlayer.play_backwards(animation_name)
+		return
+	$AnimationPlayer.play(animation_name)
+
+func stop_animation() -> void:
+	if $AnimationPlayer.assigned_animation == "Dragging":
+		z_index = 0
+	$AnimationPlayer.stop()
 
 # ------------------------------------------------------------------------------
 # Hover Events
@@ -116,16 +126,16 @@ func _process(_delta: float) -> void:
 func _on_hover_area_mouse_entered() -> void:
 	if not animate:
 		return
-	$AnimationPlayer.play("Hover")
-	UiManager.card_hovered = get_index()
+	play_animation("Hover")
+	UIManager.card_hovered = get_index()
 
 
 # Triggered when the mouse cursor leaves the card's hover area
 func _on_hover_area_mouse_exited() -> void:
 	if not animate:
 		return
-	$AnimationPlayer.play_backwards("Hover")
-	UiManager.card_hovered = null
+	play_animation("Hover", true)
+	UIManager.card_hovered = null
 
 
 # ------------------------------------------------------------------------------
