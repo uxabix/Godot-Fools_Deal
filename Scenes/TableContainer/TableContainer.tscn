@@ -1,10 +1,22 @@
-[gd_scene load_steps=2 format=3 uid="uid://b5ltsa1oucaxe"]
+[gd_scene load_steps=3 format=3 uid="uid://b5ltsa1oucaxe"]
 
 [ext_resource type="Script" uid="uid://dprq5axr1ch" path="res://Scenes/TableContainer/TableContainer.gd" id="1_jw566"]
+[ext_resource type="PackedScene" uid="uid://dxr7phpxd7qol" path="res://Scenes/Card/card.tscn" id="2_6fnbr"]
 
 [node name="TableContainer" type="Node2D"]
 script = ExtResource("1_jw566")
 
+[node name="AttackDropArea" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackDropArea"]
+
 [node name="AttackContainer" type="Node2D" parent="."]
 
 [node name="DefenseContainer" type="Node2D" parent="."]
+
+[node name="TransferGhost" type="Node2D" parent="."]
+
+[node name="Card" parent="TransferGhost" instance=ExtResource("2_6fnbr")]
+modulate = Color(1, 1, 1, 0.5)
+collision = false
+highlight = false

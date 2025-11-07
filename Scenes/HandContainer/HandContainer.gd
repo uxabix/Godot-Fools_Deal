@@ -64,8 +64,8 @@ func update_layout() -> void:
 	# Determine whether we should ignore one child (the one being dragged)
 	var ignore_index := -1
 	var effective_count := count
-
-	if UIManager.is_dragging and UIManager.card_hovered != null \
+	
+	if UIManager.is_node_ready() and UIManager.is_dragging and UIManager.card_hovered != null \
 	 and UIManager.card_hovered >= 0 and UIManager.card_hovered < count:
 		ignore_index = int(UIManager.card_hovered)
 		effective_count = max(0, count - 1)

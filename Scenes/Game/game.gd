@@ -52,7 +52,7 @@ func draw_players():
 
 func test_table_container() -> void:
 	var cardAttack = CardData.new()
-	cardAttack.rank = cd.Rank.TEN
+	cardAttack.rank = cd.Rank.THREE
 	cardAttack.suit = cd.Suit.DIAMONDS
 	var cardDefense = CardData.new()
 	cardDefense.rank = cd.Rank.KING
@@ -60,6 +60,7 @@ func test_table_container() -> void:
 	
 	for i in range(6):
 		$CanvasLayer/Control/TableContainer.add_attack(cardAttack)
+	for i in range(0):
 		$CanvasLayer/Control/TableContainer.add_defense(i, cardDefense)
 
 # Called once when the node enters the scene tree
