@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://dxr7phpxd7qol"]
+[gd_scene load_steps=14 format=3 uid="uid://dxr7phpxd7qol"]
 
 [ext_resource type="Texture2D" uid="uid://d3xvjfuuljgo0" path="res://Assets/Textures/Cards/Front.png" id="1_pedkj"]
 [ext_resource type="Script" uid="uid://bqt8o8scntu57" path="res://Scenes/Card/card.gd" id="1_yw1pg"]
@@ -7,12 +7,48 @@
 [ext_resource type="Texture2D" uid="uid://c5gqmarx3mays" path="res://Assets/Textures/Cards/Suits/Hearts/Ranks/Jack.png" id="4_c0g18"]
 [ext_resource type="FontFile" uid="uid://g6hwsrh5md1m" path="res://Assets/Fonts/OldNewspaperTypes-Regular.ttf" id="5_r5dc4"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rffhp"]
+bg_color = Color(1, 0, 0.016666412, 0.4627451)
+corner_radius_top_left = 120
+corner_radius_top_right = 120
+corner_radius_bottom_right = 120
+corner_radius_bottom_left = 120
+
 [sub_resource type="Theme" id="Theme_r5dc4"]
 default_font = ExtResource("5_r5dc4")
 default_font_size = 49
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_r5dc4"]
 size = Vector2(313.3333, 466.66666)
+
+[sub_resource type="Animation" id="Animation_j6efv"]
+resource_name = "Dragging"
+length = 2.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1, 2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0.3, 0.3), Vector2(0.29, 0.29), Vector2(0.3, 0.3)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:z_index")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [1]
+}
 
 [sub_resource type="Animation" id="Animation_r5dc4"]
 resource_name = "Hover"
@@ -69,35 +105,6 @@ tracks/1/keys = {
 "values": [0]
 }
 
-[sub_resource type="Animation" id="Animation_j6efv"]
-resource_name = "Dragging"
-length = 2.0
-loop_mode = 1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:scale")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 1, 2),
-"transitions": PackedFloat32Array(1, 1, 1),
-"update": 0,
-"values": [Vector2(0.3, 0.3), Vector2(0.29, 0.29), Vector2(0.3, 0.3)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath(".:z_index")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [1]
-}
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_j6efv"]
 _data = {
 &"Dragging": SubResource("Animation_j6efv"),
@@ -108,11 +115,32 @@ _data = {
 [node name="Card" type="Node2D"]
 scale = Vector2(0.25, 0.25)
 script = ExtResource("1_yw1pg")
+highlight = null
 
 [node name="Front" type="Node2D" parent="."]
 
 [node name="Front" type="Sprite2D" parent="Front"]
 scale = Vector2(0.24999999, 0.24999999)
+texture = ExtResource("1_pedkj")
+
+[node name="Highlight" type="Panel" parent="Front/Front"]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -746.0
+offset_top = -1121.0
+offset_right = -746.0
+offset_bottom = -1121.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+theme_override_styles/panel = SubResource("StyleBoxFlat_rffhp")
+metadata/_edit_use_anchors_ = true
+
+[node name="HighlightLimitation" type="Sprite2D" parent="Front/Front/Highlight"]
+position = Vector2(745.99994, 1112.9999)
+scale = Vector2(0.94369966, 0.96342564)
 texture = ExtResource("1_pedkj")
 
 [node name="Images" type="Node2D" parent="Front"]
@@ -193,7 +221,6 @@ texture = ExtResource("4_c0g18")
 scale = Vector2(0.99999994, 0.99999994)
 
 [node name="Control" type="Control" parent="Front/Ranks"]
-custom_minimum_size = Vector2(11.235, 0)
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -205,6 +232,7 @@ offset_bottom = 280.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
+metadata/_edit_use_anchors_ = true
 
 [node name="Rank_Top_Left" type="Label" parent="Front/Ranks/Control"]
 layout_mode = 1

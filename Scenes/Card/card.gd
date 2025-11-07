@@ -44,6 +44,10 @@ const cd = preload("res://Scripts/Utils/card_defines.gd")
 		collision = value
 		$HoverArea/CollisionShape2D.disabled = not value
 
+@export var highlight: bool = false:
+	set(value):
+		highlight = value
+		$Front/Front/Highlight.visible = highlight
 
 # ------------------------------------------------------------------------------
 # Visual and Interaction Logic
@@ -80,12 +84,15 @@ func set_textures() -> void:
 
 # Updates the textual label representation of the card's rank
 func set_text() -> void:
+		
+	var card_name: String = cd.get_rank_name(rank)
+	# Fallback to numeric value if rank name is empty
+	card_name = str(rank + cd.FIRST_CARD_VALUE) if card_name == "" else card_name
+	var display_name = card_name if len(card_name) < 3 else card_name[0]
 	for i in $Front/Ranks/Control.get_children():
-		var card_name: String = cd.get_rank_name(rank)
-		# Fallback to numeric value if rank name is empty
-		card_name = str(rank + cd.FIRST_CARD_VALUE) if card_name == "" else card_name
+		if not i is Label: continue
 		# Shorten text if too long (e.g., "Queen" → "Q")
-		i.text = card_name if len(card_name) < 3 else card_name[0]
+		i.text = display_name
 
 
 # Initializes the card with given data (typically from CardData resource)
