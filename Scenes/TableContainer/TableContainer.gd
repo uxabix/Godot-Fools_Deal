@@ -173,3 +173,16 @@ func update_transfer_ghost(enabled: bool) -> void:
 	var sprite := ghost.get_node_or_null("Sprite2D")
 	if sprite:
 		sprite.modulate.a = 0.5
+
+
+func _on_attack_drop_area_mouse_entered() -> void:
+	if GameManager.current_player not in GameManager.players_attacking:
+		return
+	if not UIManager.is_dragging:
+		return
+	UIManager.in_attack_area = true
+
+
+
+func _on_attack_drop_area_mouse_exited() -> void:
+	UIManager.in_attack_area = false

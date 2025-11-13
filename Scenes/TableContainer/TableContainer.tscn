@@ -20,3 +20,6 @@ script = ExtResource("1_jw566")
 modulate = Color(1, 1, 1, 0.5)
 collision = false
 highlight = false
+
+[connection signal="mouse_entered" from="AttackDropArea" to="." method="_on_attack_drop_area_mouse_entered"]
+[connection signal="mouse_exited" from="AttackDropArea" to="." method="_on_attack_drop_area_mouse_exited"]

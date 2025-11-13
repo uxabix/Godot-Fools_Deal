@@ -12,6 +12,8 @@ var deck: Deck                                 ## Main deck used in the current 
 var discard_pile: DiscardPile                  ## Pile for discarded cards
 var players: Array[Player] = []                ## List of all players (human and bots)
 var current_player: Player
+var players_attacking: Array[Player]
+var player_defending: Player
 
 ##
 # Creates and initializes players.
@@ -39,6 +41,8 @@ func notify_players_trump():
 func start_game() -> void:
 	set_players(ruleset.common_options.players_count, ruleset.common_options.bot_count)
 	current_player = players[0]
+	players_attacking = [players[0]]
+	player_defending = players[1]
 	deck = Deck.new(ruleset)
 	trump = deck.trump.suit
 	notify_players_trump()
@@ -49,14 +53,5 @@ func start_game() -> void:
 		for i in range(ruleset.cards_in_hand):
 			player.add_card(deck.draw_card())
 
-
-##
-# Handles logic for when a player plays a card.
-# Validates the move according to the ruleset.
-# @param player - the player playing the card
-# @param card - the card being played
-##
 func play_card(player: Player, card: CardData) -> void:
-	if ruleset.can_attack(card):
-		discard_pile.add_card(card)
-		player.hand.erase(card)
+	return

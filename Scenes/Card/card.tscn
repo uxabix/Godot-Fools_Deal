@@ -115,7 +115,6 @@ _data = {
 [node name="Card" type="Node2D"]
 scale = Vector2(0.25, 0.25)
 script = ExtResource("1_yw1pg")
-highlight = null
 
 [node name="Front" type="Node2D" parent="."]
 

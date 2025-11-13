@@ -10,16 +10,21 @@ var card_hovered = null: # Index of selected card in hand
 		card_hovered = value
 		set_collisions()
 var is_dragging: bool = false # Flag indicates if player dragging a card
-		
+var in_attack_area: bool = false
 var player_hand: HandContainer ## Reference to the player's HandContainer scene
+var table: TableContainer ## Refence to the player's HandContainer scene
 
 var i = 1
-var dragging_just_started = 0
-var selected_card: Node2D
+var dragging_just_started = 1
+var selected_card: Card
 func _input(event: InputEvent) -> void:
 	if selected_card and Input.is_action_just_released("LMB"):
 		selected_card.stop_animation()
-		dragging_just_started = 0
+		if in_attack_area and GameManager.current_player in GameManager.players_attacking:
+			table.add_attack(selected_card.get_data())
+			player_hand.remove_child(selected_card)
+			print("Is trying to attack!")
+		dragging_just_started = 1
 		selected_card = null
 		is_dragging = false
 		card_hovered = null
@@ -30,9 +35,9 @@ func _input(event: InputEvent) -> void:
 		selected_card = player_hand.get_child(card_hovered)
 		selected_card.position += event.relative
 		selected_card.play_animation("Dragging")
-		if dragging_just_started == 0:
+		if dragging_just_started == 1:
 			player_hand.update_layout()
-			dragging_just_started = 1
+			dragging_just_started = 0
 
 
 # ------------------------------------------------------------------------------

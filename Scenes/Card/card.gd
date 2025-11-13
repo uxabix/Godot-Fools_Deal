@@ -16,6 +16,9 @@ const cd = preload("res://Scripts/Utils/card_defines.gd")
 # Exported Properties
 # ------------------------------------------------------------------------------
 
+# Exists only if init method was called
+var _data: CardData
+
 # Indicates whether the card is currently face-up (true) or face-down (false)
 @export var is_face_up: bool = true:
 	set(value):
@@ -84,7 +87,6 @@ func set_textures() -> void:
 
 # Updates the textual label representation of the card's rank
 func set_text() -> void:
-		
 	var card_name: String = cd.get_rank_name(rank)
 	# Fallback to numeric value if rank name is empty
 	card_name = str(rank + cd.FIRST_CARD_VALUE) if card_name == "" else card_name
@@ -97,9 +99,12 @@ func set_text() -> void:
 
 # Initializes the card with given data (typically from CardData resource)
 func init(data: CardData) -> void:
+	_data = data
 	suit = data.suit
 	rank = data.rank
 
+func get_data() -> CardData:
+	return _data
 
 # ------------------------------------------------------------------------------
 # Lifecycle

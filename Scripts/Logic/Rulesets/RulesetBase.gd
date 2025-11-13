@@ -52,5 +52,8 @@ func can_transfer(card: CardData, attack_cards: Array[CardData]) -> bool:
 # Determines if a card can be played as an attack in the current context.
 # By default, all cards can attack.
 ##
-func can_attack(card: CardData) -> bool:
-	return true
+func can_attack(defense_card: CardData, attack_card: CardData, trump: cd.Suit) -> bool:
+	if defense_card.suit != trump and defense_card.suit != attack_card.suit:
+		return false
+		
+	return defense_card.rank > attack_card.rank
