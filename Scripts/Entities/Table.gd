@@ -22,7 +22,7 @@ var pairs: Array[Dictionary] = [] # Array of { "attack": CardData, "defense": Ca
 var ranks_on_table: Array[cd.Rank] = []
 var ghost_data: CardData = CardData.new()
 
-func _ready() -> void:
+func _init() -> void:
 	ruleset = GameManager.ruleset
 
 func add_attack(player: Player, card: CardData) -> bool:

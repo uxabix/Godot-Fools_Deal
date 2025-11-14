@@ -55,5 +55,8 @@ func start_game() -> void:
 		for i in range(ruleset.cards_in_hand):
 			player.add_card(deck.draw_card())
 
-func play_card(player: Player, card: CardData) -> void:
-	return
+func play_attack_card(player: Player, card: CardData) -> bool:
+	return table.add_attack(player, card)
+	
+func play_defense_card(player: Player, card: CardData, attack_index: int) -> bool:
+	return table.add_defense(player, card, attack_index)

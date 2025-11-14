@@ -15,11 +15,11 @@ script = ExtResource("1_jw566")
 [node name="DefenseContainer" type="Node2D" parent="."]
 
 [node name="TransferGhost" type="Node2D" parent="."]
+visible = false
 
 [node name="Card" parent="TransferGhost" instance=ExtResource("2_6fnbr")]
 modulate = Color(1, 1, 1, 0.5)
 collision = false
-highlight = false
 
 [connection signal="mouse_entered" from="AttackDropArea" to="." method="_on_attack_drop_area_mouse_entered"]
 [connection signal="mouse_exited" from="AttackDropArea" to="." method="_on_attack_drop_area_mouse_exited"]

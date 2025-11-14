@@ -17,13 +17,20 @@ var table: TableContainer ## Refence to the player's HandContainer scene
 var i = 1
 var dragging_just_started = 1
 var selected_card: Card
+
+func try_attack() -> bool:
+	print("Is trying to attack!")
+	return GameManager.play_attack_card(GameManager.current_player, selected_card.get_data())
+
+func update_ui():
+	table.add_attack(selected_card.get_data())
+	player_hand.remove_child(selected_card)
+	
 func _input(event: InputEvent) -> void:
 	if selected_card and Input.is_action_just_released("LMB"):
 		selected_card.stop_animation()
-		if in_attack_area and GameManager.current_player in GameManager.players_attacking:
-			table.add_attack(selected_card.get_data())
-			player_hand.remove_child(selected_card)
-			print("Is trying to attack!")
+		if in_attack_area and try_attack():
+			update_ui()
 		dragging_just_started = 1
 		selected_card = null
 		is_dragging = false

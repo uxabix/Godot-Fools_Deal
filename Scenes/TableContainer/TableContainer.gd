@@ -14,15 +14,12 @@ const cd = preload("res://Scripts/Utils/card_defines.gd")
 @export var max_rotation: float = 5 # Maximum card rotation in degrees
 @export var min_rotation: float = -2 # Minimum card rotation in degrees
 
-var ruleset: RulesetBase
-
 var max_pairs := 6
 
 var pairs: Array[Dictionary] = [] # Array of { "attack": CardData, "defense": CardData }
 var ghost_data: CardData = CardData.new()
 
 func _ready() -> void:
-	ruleset = GameManager.ruleset
 	update_layout()
 	_update_attack_drop_area()
 
@@ -123,7 +120,9 @@ func _update_attack_drop_area() -> void:
 	$AttackDropArea.position = Vector2(0, 0)
 
 func get_can_transfer() -> bool:
-	if not ruleset.translated_mode or len(pairs) < 1:
+	if not GameManager.ruleset.translated_mode or len(pairs) < 1:
+		return false
+	if GameManager.current_player != GameManager.player_defending:
 		return false
 	
 	# check if there's not defense cards on table
