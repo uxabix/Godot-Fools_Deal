@@ -47,13 +47,28 @@ func can_transfer(card: CardData, attack_cards: Array[CardData]) -> bool:
 	
 	return translated_mode and flag
 
-
 ##
 # Determines if a card can be played as an attack in the current context.
-# By default, all cards can attack.
 ##
-func can_attack(defense_card: CardData, attack_card: CardData, trump: cd.Suit) -> bool:
-	if defense_card.suit != trump and defense_card.suit != attack_card.suit:
+func can_attack(player: Player, card: CardData, pairs: int, max_pairs_this_turn: int, ranks_on_table: Array[cd.Rank]) -> bool:
+	if player not in GameManager.players_attacking:
+		return false
+	if pairs >= max_pairs_this_turn:
+		return false
+	if pairs == 0:
+		return true
+	if card.rank not in ranks_on_table:
+		return false
+	
+	return true
+	
+##
+# Determines if a card can be played as a defense in the current context.
+##
+func can_defend(player: Player, defense_card: CardData, attack_card: CardData) -> bool:
+	if player != GameManager.player_defending:
+		return false
+	if defense_card.suit != GameManager.trump and defense_card.suit != attack_card.suit:
 		return false
 		
 	return defense_card.rank > attack_card.rank

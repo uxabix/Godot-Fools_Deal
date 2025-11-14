@@ -10,6 +10,7 @@ var trump: cd.Suit = cd.Suit.DIAMONDS          ## Current trump suit for the gam
 var ruleset: RulesetBase = preload("res://Scripts/Logic/Rulesets/Variants/ClassicRuleset.gd").new()  ## Active game ruleset
 var deck: Deck                                 ## Main deck used in the current game
 var discard_pile: DiscardPile                  ## Pile for discarded cards
+var table: Table
 var players: Array[Player] = []                ## List of all players (human and bots)
 var current_player: Player
 var players_attacking: Array[Player]
@@ -47,6 +48,7 @@ func start_game() -> void:
 	trump = deck.trump.suit
 	notify_players_trump()
 	discard_pile = DiscardPile.new()
+	table = Table.new()
 
 	# Deal cards to each player
 	for player in players:
