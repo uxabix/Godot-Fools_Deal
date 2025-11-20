@@ -52,6 +52,11 @@ func start_game() -> void:
 
 	# Deal cards to each player
 	for player in players:
+		if player == current_player:
+			for i in range(10):
+				var card = CardData.new()
+				player.add_card(card)
+			continue
 		for i in range(ruleset.cards_in_hand):
 			player.add_card(deck.draw_card())
 
