@@ -73,7 +73,7 @@ func _ready() -> void:
 	$CanvasLayer/PlayerHand/HandContainer.set_cards(GameManager.current_player.hand, player_card_appearance)
 	draw_players()
 	
-	test_table_container()
+	#test_table_container()
 
 # Called every frame (currently unused)
 func _process(_delta: float) -> void:

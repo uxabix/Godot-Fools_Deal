@@ -249,16 +249,54 @@ func update_transfer_ghost(enabled: bool) -> void:
 
 # ==================== Highlight Logic =========================
 
-func update_highlight_to_selected() -> Card:
+func _find_pair_index_by_card(card: Card) -> int:
+	if not card:
+		return -1
+	var data := card.get_data()
+	if not data:
+		return -1
+
+	for i in range(pairs.size()):
+		var attack_data : CardData = pairs[i]["attack"]
+		print(attack_data.rank, data.rank)
+		if attack_data and attack_data.rank == data.rank and attack_data.suit == data.suit:
+			return i
+	return -1
+
+
+
+func update_highlight_to_selected() -> Dictionary:
 	var selected: Card = UIManager.selected_card
 	if not selected:
 		clear_all_highlights()
-		return null
+		return {}
 
-	var target := _find_closest_table_card(selected.global_position)
-	_apply_highlight(target)
-	return target
+	var target_card := _find_closest_table_card(selected.global_position)
+	_apply_highlight(target_card)
 
+	return _build_highlight_result(target_card)
+
+func _build_highlight_result(target: Card) -> Dictionary:
+	if not target:
+		return {}
+
+	# Check if transfer ghost
+	var ghost := $TransferGhost.get_node_or_null("Card")
+	if ghost and target == ghost:
+		return {
+			"type": "ghost",
+			"index": -1,
+			"card": target
+		}
+
+	# If normal card -> seek for index
+	var pair_idx := _find_pair_index_by_card(target)
+
+	return {
+		"type": "attack",
+		"index": pair_idx,
+		"card": target
+	}
 
 func _find_closest_table_card(player_pos: Vector2) -> Card:
 	var closest_card: Card = null

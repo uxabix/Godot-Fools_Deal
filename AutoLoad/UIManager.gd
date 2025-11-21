@@ -20,7 +20,14 @@ var selected_card: Card
 func try_attack() -> bool:
 	return GameManager.play_attack_card(GameManager.current_player, selected_card.get_data())
 
+#func try_defend() -> bool:
+	#return GameManager.play_defense_card(GameManager.current_player, selected_card.get_data(), )
+
 func update_ui_attack():
+	table.add_attack(selected_card.get_data())
+	player_hand.remove_child(selected_card)
+
+func update_ui_defend():
 	table.add_attack(selected_card.get_data())
 	player_hand.remove_child(selected_card)
 	
@@ -29,8 +36,8 @@ func _input(event: InputEvent) -> void:
 		selected_card.stop_animation()
 		if in_action_area and try_attack():
 			update_ui_attack()
-		else:
-			pass
+		#elif try_defend():
+			#update_ui_defend()
 		dragging_just_started = 1
 		selected_card = null
 		is_dragging = false
@@ -49,7 +56,7 @@ func _input(event: InputEvent) -> void:
 		
 		# Defense
 		if in_action_area and GameManager.current_player == GameManager.player_defending:
-			table.update_highlight_to_selected()
+			print(table.update_highlight_to_selected())
 		else:
 			table.clear_all_highlights()
 
