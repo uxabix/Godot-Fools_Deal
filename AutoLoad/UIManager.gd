@@ -17,18 +17,22 @@ var table: TableContainer ## Refence to the player's HandContainer scene
 var dragging_just_started = 1
 var selected_card: Card
 
+var highlited_card: Dictionary
+
 func try_attack() -> bool:
 	return GameManager.play_attack_card(GameManager.current_player, selected_card.get_data())
 
-#func try_defend() -> bool:
-	#return GameManager.play_defense_card(GameManager.current_player, selected_card.get_data(), )
+func try_defend() -> bool:
+	if highlited_card.size() < 3:
+		return false
+	return GameManager.play_defense_card(GameManager.current_player, selected_card.get_data(), highlited_card["index"])
 
 func update_ui_attack():
 	table.add_attack(selected_card.get_data())
 	player_hand.remove_child(selected_card)
 
 func update_ui_defend():
-	table.add_attack(selected_card.get_data())
+	table.add_defense(highlited_card["index"], selected_card.get_data())
 	player_hand.remove_child(selected_card)
 	
 func _input(event: InputEvent) -> void:
@@ -36,8 +40,8 @@ func _input(event: InputEvent) -> void:
 		selected_card.stop_animation()
 		if in_action_area and try_attack():
 			update_ui_attack()
-		#elif try_defend():
-			#update_ui_defend()
+		elif try_defend():
+			update_ui_defend()
 		dragging_just_started = 1
 		selected_card = null
 		is_dragging = false
@@ -56,8 +60,9 @@ func _input(event: InputEvent) -> void:
 		
 		# Defense
 		if in_action_area and GameManager.current_player == GameManager.player_defending:
-			print(table.update_highlight_to_selected())
+			highlited_card = table.update_highlight_to_selected()
 		else:
+			highlited_card = Dictionary()
 			table.clear_all_highlights()
 
 # ------------------------------------------------------------------------------

@@ -258,7 +258,6 @@ func _find_pair_index_by_card(card: Card) -> int:
 
 	for i in range(pairs.size()):
 		var attack_data : CardData = pairs[i]["attack"]
-		print(attack_data.rank, data.rank)
 		if attack_data and attack_data.rank == data.rank and attack_data.suit == data.suit:
 			return i
 	return -1
