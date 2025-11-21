@@ -8,7 +8,7 @@
 [ext_resource type="FontFile" uid="uid://g6hwsrh5md1m" path="res://Assets/Fonts/OldNewspaperTypes-Regular.ttf" id="5_r5dc4"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rffhp"]
-bg_color = Color(1, 0, 0.016666412, 0.4627451)
+bg_color = Color(1, 0, 0.012920001, 0.81200004)
 corner_radius_top_left = 120
 corner_radius_top_right = 120
 corner_radius_bottom_right = 120
@@ -138,8 +138,8 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_rffhp")
 metadata/_edit_use_anchors_ = true
 
 [node name="HighlightLimitation" type="Sprite2D" parent="Front/Front/Highlight"]
-position = Vector2(745.99994, 1112.9999)
-scale = Vector2(0.94369966, 0.96342564)
+position = Vector2(754.00006, 1121)
+scale = Vector2(0.91152817, 0.9277432)
 texture = ExtResource("1_pedkj")
 
 [node name="Images" type="Node2D" parent="Front"]
@@ -236,8 +236,10 @@ metadata/_edit_use_anchors_ = true
 [node name="Rank_Top_Left" type="Label" parent="Front/Ranks/Control"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = -0.010638341
-anchor_right = 0.11702123
+anchor_left = 0.010638255
+anchor_top = 0.021428516
+anchor_right = 0.13829783
+anchor_bottom = 0.021428516
 offset_right = 33.0
 offset_bottom = 141.0
 theme = SubResource("Theme_r5dc4")
@@ -250,10 +252,10 @@ metadata/_edit_use_anchors_ = true
 [node name="Rank_Bottom_Right" type="Label" parent="Front/Ranks/Control"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 1.0130118
-anchor_top = 0.9785714
-anchor_right = 1.1171958
-anchor_bottom = 0.9785714
+anchor_left = 0.9893617
+anchor_top = 0.96428573
+anchor_right = 1.0935457
+anchor_bottom = 0.96428573
 offset_right = 32.99997
 offset_bottom = 141.0
 rotation = 3.1415927
@@ -268,10 +270,11 @@ position = Vector2(-152.74995, -189.10298)
 scale = Vector2(0.14087297, 0.14087297)
 
 [node name="Suit_Top_Left" type="Sprite2D" parent="Front/Suits"]
+position = Vector2(62.112373, 36.22399)
 texture = ExtResource("3_r5dc4")
 
 [node name="Suit_Bottom_Right" type="Sprite2D" parent="Front/Suits"]
-position = Vector2(2184.5918, 2584.6191)
+position = Vector2(2134.9019, 2591.7178)
 rotation = -3.1415927
 texture = ExtResource("3_r5dc4")
 

@@ -143,6 +143,8 @@ func update_layout() -> void:
 	for i in range(total_cards):
 		var pair = pairs[i]
 		var row = i / 3
+		# ensure integer row (0 or 1)
+		row = int(row)
 		var index_in_row = i % 3
 		var count_in_row = first_row_count if row == 0 else second_row_count
 		var pos_x = calc_x(index_in_row, count_in_row)
@@ -189,8 +191,8 @@ func _update_attack_drop_area() -> void:
 	var shape := $AttackDropArea.get_node("CollisionShape2D")
 	if not shape:
 		return
-	var width := (3 * card_spacing) * 1.5
-	var height := row_offset * 2.0
+	var width := (3 * card_spacing) * 2.25
+	var height := row_offset * 2.75
 	var rect := RectangleShape2D.new()
 	rect.extents = Vector2(width * 0.5, height * 0.5)
 	shape.shape = rect
@@ -232,9 +234,10 @@ func update_transfer_ghost(enabled: bool) -> void:
 		return
 
 	var last_index = pairs.size() - 1
-	var row = last_index / 3
+	var row = int(last_index / 3)
 	var index_in_row = last_index % 3
-	var count_in_row = min(pairs.size(), 3)
+	# choose correct count_in_row depending on row
+	var count_in_row = min(pairs.size(), 3) if row == 0 else max(0, pairs.size() - 3)
 
 	var pos_x = calc_x(index_in_row, count_in_row) + card_spacing
 	var pos_y = -row_offset / 2.0 if row == 0 else row_offset / 2.0
@@ -244,13 +247,106 @@ func update_transfer_ghost(enabled: bool) -> void:
 	if sprite:
 		sprite.modulate.a = 0.5
 
+# ==================== Highlight Logic =========================
+
+func update_highlight_to_selected() -> Card:
+	var selected: Card = UIManager.selected_card
+	if not selected:
+		clear_all_highlights()
+		return null
+
+	var target := _find_closest_table_card(selected.global_position)
+	_apply_highlight(target)
+	return target
+
+
+func _find_closest_table_card(player_pos: Vector2) -> Card:
+	var closest_card: Card = null
+	var closest_dist := INF
+
+	# Build set of attack instance ids that are defended (so we can skip them)
+	var defended_attack_ids := {}
+	for pair in pairs:
+		if pair["attack"] and pair["defense"] != null:
+			defended_attack_ids[get_data_key(pair["attack"])] = true
+
+	# ----------- Check all visible attack cards (skip defended) -------------
+	for attack_card in attack_nodes:
+		if not attack_card:
+			continue
+		if not attack_card.visible:
+			continue
+		var data := attack_card.get_data()
+		if not data:
+			continue
+		var data_id = get_data_key(data)
+		if defended_attack_ids.has(data_id):
+			continue  # skip defended attack cards
+		var d := player_pos.distance_to(attack_card.global_position)
+		if d < closest_dist:
+			closest_dist = d
+			closest_card = attack_card
+
+	# ----------- Check transfer ghost -------------------------------
+	var ghost := $TransferGhost
+	if ghost.visible:
+		var ghost_card := ghost.get_node_or_null("Card")
+		if ghost_card:
+			var d := player_pos.distance_to(ghost.global_position)
+			if d < closest_dist:
+				closest_card = ghost_card
+				closest_dist = d
+
+	return closest_card
+
+
+func _apply_highlight(target: Card) -> void:
+	# Turn off highlight on all attack and defense cards
+	for c in attack_nodes:
+		if c and c.visible:
+			c.highlight = (c == target)
+
+	for c in defense_nodes:
+		if c and c.visible:
+			c.highlight = false
+
+	# ghost highlight
+	var ghost := $TransferGhost
+	if ghost.visible:
+		var gcard := ghost.get_node_or_null("Card")
+		var sprite := ghost.get_node_or_null("Sprite2D")
+		if gcard:
+			if gcard == target:
+				gcard.highlight = true
+				if sprite: sprite.modulate = Color(1, 1, 1, 0.9)
+			else:
+				gcard.highlight = false
+				if sprite: sprite.modulate = Color(1, 1, 1, 0.5)
+
+
+func clear_all_highlights() -> void:
+	for c in attack_nodes:
+		if c:
+			c.highlight = false
+	for c in defense_nodes:
+		if c:
+			c.highlight = false
+
+	var ghost := $TransferGhost
+	var gcard := ghost.get_node_or_null("Card")
+	var sprite := ghost.get_node_or_null("Sprite2D")
+
+	if gcard:
+		gcard.highlight = false
+	if sprite:
+		sprite.modulate = Color(1, 1, 1, 0.5)
+
+
 # ---------------------- Mouse Signals ------------------------
 func _on_attack_drop_area_mouse_entered() -> void:
-	if GameManager.current_player not in GameManager.players_attacking:
-		return
 	if not UIManager.is_dragging:
 		return
-	UIManager.in_attack_area = true
+	UIManager.in_action_area = true
 
 func _on_attack_drop_area_mouse_exited() -> void:
-	UIManager.in_attack_area = false
+	UIManager.in_action_area = false

@@ -60,7 +60,7 @@ func test_table_container() -> void:
 	
 	for i in range(6):
 		$CanvasLayer/Control/TableContainer.add_attack(cardAttack)
-	for i in range(6):
+	for i in range(0):
 		$CanvasLayer/Control/TableContainer.add_defense(i, cardDefense)
 
 # Called once when the node enters the scene tree
@@ -73,7 +73,7 @@ func _ready() -> void:
 	$CanvasLayer/PlayerHand/HandContainer.set_cards(GameManager.current_player.hand, player_card_appearance)
 	draw_players()
 	
-	#test_table_container()
+	test_table_container()
 
 # Called every frame (currently unused)
 func _process(_delta: float) -> void:

@@ -10,32 +10,33 @@ var card_hovered = null: # Index of selected card in hand
 		card_hovered = value
 		set_collisions()
 var is_dragging: bool = false # Flag indicates if player dragging a card
-var in_attack_area: bool = false
+var in_action_area: bool = false
 var player_hand: HandContainer ## Reference to the player's HandContainer scene
 var table: TableContainer ## Refence to the player's HandContainer scene
 
-var i = 1
 var dragging_just_started = 1
 var selected_card: Card
 
 func try_attack() -> bool:
-	print("Is trying to attack!")
 	return GameManager.play_attack_card(GameManager.current_player, selected_card.get_data())
 
-func update_ui():
+func update_ui_attack():
 	table.add_attack(selected_card.get_data())
 	player_hand.remove_child(selected_card)
 	
 func _input(event: InputEvent) -> void:
 	if selected_card and Input.is_action_just_released("LMB"):
 		selected_card.stop_animation()
-		if in_attack_area and try_attack():
-			update_ui()
+		if in_action_area and try_attack():
+			update_ui_attack()
+		else:
+			pass
 		dragging_just_started = 1
 		selected_card = null
 		is_dragging = false
 		card_hovered = null
 		player_hand.update_layout()
+		table.clear_all_highlights()
 	if event is InputEventMouseMotion and Input.is_action_pressed("LMB"):
 		if card_hovered == null: return
 		is_dragging = true
@@ -45,7 +46,12 @@ func _input(event: InputEvent) -> void:
 		if dragging_just_started == 1:
 			player_hand.update_layout()
 			dragging_just_started = 0
-
+		
+		# Defense
+		if in_action_area and GameManager.current_player == GameManager.player_defending:
+			table.update_highlight_to_selected()
+		else:
+			table.clear_all_highlights()
 
 # ------------------------------------------------------------------------------
 # Cards in hand helper functions

@@ -42,8 +42,8 @@ func notify_players_trump():
 func start_game() -> void:
 	set_players(ruleset.common_options.players_count, ruleset.common_options.bot_count)
 	current_player = players[0]
-	players_attacking = [players[0]]
-	player_defending = players[1]
+	players_attacking = [players[1]]
+	player_defending = players[0]
 	deck = Deck.new(ruleset)
 	trump = deck.trump.suit
 	notify_players_trump()
@@ -52,11 +52,6 @@ func start_game() -> void:
 
 	# Deal cards to each player
 	for player in players:
-		if player == current_player:
-			for i in range(10):
-				var card = CardData.new()
-				player.add_card(card)
-			continue
 		for i in range(ruleset.cards_in_hand):
 			player.add_card(deck.draw_card())
 
