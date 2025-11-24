@@ -19,7 +19,7 @@
 
 v0.3 - Game Logic
 - Turn system
-- Basic fighting rules (attack/defense mechanics)
+- [x] Basic fighting rules (attack/defense mechanics)
 
 v0.4 - AI & Players
 - Basic AI (random valid cards, maybe simple logic like lowest card first)
