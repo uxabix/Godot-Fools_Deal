@@ -7,7 +7,7 @@ extends Node
 const cd = preload("res://Scripts/Utils/card_defines.gd")
 
 var trump: cd.Suit = cd.Suit.DIAMONDS          ## Current trump suit for the game
-var ruleset: RulesetBase = preload("res://Scripts/Logic/Rulesets/Variants/ClassicRuleset.gd").new()  ## Active game ruleset
+var ruleset: RulesetBase = preload("res://Scripts/GameLogic/Rulesets/Variants/ClassicRuleset.gd").new()  ## Active game ruleset
 var deck: Deck                                 ## Main deck used in the current game
 var discard_pile: DiscardPile                  ## Pile for discarded cards
 var table: Table

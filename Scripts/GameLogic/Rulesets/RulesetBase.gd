@@ -70,5 +70,7 @@ func can_defend(player: Player, defense_card: CardData, attack_card: CardData) -
 		return false
 	if defense_card.suit != GameManager.trump and defense_card.suit != attack_card.suit:
 		return false
+	if defense_card.suit == GameManager.trump and attack_card.suit != GameManager.trump:
+		return true
 		
 	return defense_card.rank > attack_card.rank
