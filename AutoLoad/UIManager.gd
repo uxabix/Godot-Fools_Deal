@@ -28,11 +28,9 @@ func try_defend() -> bool:
 	return GameManager.play_defense_card(GameManager.current_player, selected_card.get_data(), highlited_card["index"])
 
 func update_ui_attack():
-	table.add_attack(selected_card.get_data())
 	player_hand.remove_child(selected_card)
 
 func update_ui_defend():
-	table.add_defense(highlited_card["index"], selected_card.get_data())
 	player_hand.remove_child(selected_card)
 	
 func _input(event: InputEvent) -> void:

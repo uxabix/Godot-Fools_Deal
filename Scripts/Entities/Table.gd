@@ -9,17 +9,28 @@ const cd = preload("res://Scripts/Utils/card_defines.gd")
 signal pairs_changed
 signal ghost_changed
 
-@export var max_pairs := 6
+var DEBUG = false
+
+var max_pairs := 6
 
 var ruleset: RulesetBase
 var pairs: Array[Dictionary] = [] # { "attack": CardData, "defense": CardData }
 var ranks_on_table: Array[cd.Rank] = []
 var ghost_data: CardData = null
 
+
+func on_any_change(event: String = "Any") -> void:
+	if not DEBUG: return
+	print("-------------")
+	print(event)
+	print(pairs)
+
 func _init() -> void:
+	# assume GameManager.ruleset exists and is initialized before Table
 	ruleset = GameManager.ruleset
 
 # ---------------------- Attack / Defense ----------------------
+# player param is required so ruleset.can_attack/can_defend can use it.
 func add_attack(player: Player, card: CardData) -> bool:
 	if not ruleset.can_attack(player, card, len(pairs), max_pairs, ranks_on_table):
 		return false
@@ -29,6 +40,7 @@ func add_attack(player: Player, card: CardData) -> bool:
 	ranks_on_table.append(card.rank)
 	emit_signal("pairs_changed")
 	emit_signal("ghost_changed")
+	on_any_change("Add attack")
 	return true
 
 func add_defense(player: Player, card: CardData, attack_index: int) -> bool:
@@ -42,6 +54,7 @@ func add_defense(player: Player, card: CardData, attack_index: int) -> bool:
 	ranks_on_table.append(card.rank)
 	emit_signal("pairs_changed")
 	emit_signal("ghost_changed")
+	on_any_change("Add defense")
 	return true
 
 func clear() -> void:
@@ -50,19 +63,25 @@ func clear() -> void:
 	ghost_data = null
 	emit_signal("pairs_changed")
 	emit_signal("ghost_changed")
+	on_any_change("Clear")
 
 # ---------------------- Transfer Ghost ------------------------
+# Determines if transfer is allowed and prepares ghost_data accordingly.
 func get_can_transfer() -> bool:
 	if not ruleset.translated_mode or pairs.size() < 1:
+		ghost_data = null
 		return false
 	for pair in pairs:
 		if pair["defense"]:
+			ghost_data = null
 			return false
 
 	var rank: cd.Rank = pairs[0]["attack"].rank
 	var suits: Array[cd.Suit] = []
 	for pair in pairs:
+		# all attacks must have same rank
 		if pair["attack"].rank != rank:
+			ghost_data = null
 			return false
 		suits.append(pair["attack"].suit)
 
@@ -72,7 +91,18 @@ func get_can_transfer() -> bool:
 	ghost_data.suit = remained_suits.pick_random()
 	return true
 
-func set_ghost_appearance() -> void:
-	if not get_can_transfer():
-		ghost_data = null
+# Sets ghost appearance state (updates ghost_data if necessary and emits)
+func set_ghost_appearance(emmiter: String = "self") -> void:
+	# get_can_transfer will set ghost_data appropriately or null it
+	get_can_transfer()
+	if emmiter != "self":
+		return
 	emit_signal("ghost_changed")
+
+# Convenience accessors for external callers
+func get_pairs() -> Array:
+	# return shallow copy - caller should not modify original
+	return pairs.duplicate()
+
+func get_ghost_data() -> CardData:
+	return ghost_data

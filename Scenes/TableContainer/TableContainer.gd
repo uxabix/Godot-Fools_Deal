@@ -3,26 +3,39 @@ class_name TableContainer
 
 const cd = preload("res://Scripts/Utils/card_defines.gd")
 
+# Scene references
 @export var card_scene: PackedScene = preload("res://Scenes/Card/card.tscn")
+
+# Layout tuning
 @export var card_spacing: float = 120.0
 @export var row_offset: float = 80.0
 @export var defense_offset: float = 20.0
 @export var max_rotation: float = 5.0
 @export var min_rotation: float = -2.0
 
+# Animation
 @export var animate: bool = true
 @export var animation_time: float = 0.25
 
+# Table node to bind to (logical table). Set in the editor or auto-find.
+@export var table_path: NodePath
+
+# Internal limits
 var max_pairs: int = 6
 
-var pairs: Array[Dictionary] = []
-var ghost_data: CardData = CardData.new()
+# Local visual pools and state
+var pairs: Array[Dictionary] = [] # mirror of logical table pairs for rendering
+var ghost_data: CardData = null
 
 var attack_nodes: Array[Card] = []
 var defense_nodes: Array[Card] = []
 
+# prev positions/rotations for smooth transitions (keyed by CardData.instance_id)
 var prev_positions := {}
 var prev_rotations := {}
+
+# Reference to logical table node
+var table: Table = null
 
 # ---------------------- Keys for Cards ------------------------
 func get_card_key(card: Card) -> int:
@@ -37,39 +50,39 @@ func get_data_key(data: CardData) -> int:
 
 # ---------------------- Initialization ------------------------
 func _ready() -> void:
-	update_layout()
+	pass
+	
+func init() -> void:
+	# find the Table node
+	if not table:
+		push_error("TableContainer: Could not find Table node. Please assign table_path in inspector or add a Table node to the scene tree.")
+		return
+
+	# connect signals
+	table.pairs_changed.connect(self._on_table_pairs_changed)
+	table.ghost_changed.connect(self._on_table_ghost_changed)
+
+	# initial sync
+	_on_table_pairs_changed()
+	_on_table_ghost_changed()
 	_update_attack_drop_area()
 
-# ---------------------- Public API ----------------------------
-func add_attack(card: CardData) -> bool:
-	if pairs.size() >= max_pairs:
+# ---------------------- Public API / wrappers ------------------
+# these wrappers call the logical table methods (pass GameManager.current_player as player)
+func request_add_attack(card: CardData) -> bool:
+	if not table:
 		return false
-	pairs.append({"attack": card, "defense": null})
-	var key = get_data_key(card)
-	if not prev_rotations.has(key):
-		prev_rotations[key] = -get_random_rotation(min_rotation, max_rotation)
-	update_layout()
-	return true
+	return table.add_attack(GameManager.current_player, card)
 
-func add_defense(attack_index: int, card: CardData) -> bool:
-	if attack_index < 0 or attack_index >= pairs.size():
+func request_add_defense(attack_index: int, card: CardData) -> bool:
+	if not table:
 		return false
-	if pairs[attack_index]["defense"] != null:
-		return false
-	pairs[attack_index]["defense"] = card
-	var key = get_data_key(card)
-	if not prev_rotations.has(key):
-		prev_rotations[key] = get_random_rotation(min_rotation, max_rotation)
-	update_layout()
-	return true
+	return table.add_defense(GameManager.current_player, card, attack_index)
 
-func clear() -> void:
-	pairs.clear()
-	prev_rotations.clear()
-	for c in attack_nodes + defense_nodes:
-		if c:
-			c.visible = false
-	update_transfer_ghost(false)
+func request_clear() -> void:
+	if not table:
+		return
+	table.clear()
 
 # ---------------------- Helpers -------------------------------
 func calc_x(index: int, count: int) -> float:
@@ -81,13 +94,14 @@ func calc_x(index: int, count: int) -> float:
 func get_random_rotation(min_rot: float, max_rot: float) -> float:
 	return deg_to_rad(randf_range(min_rot, max_rot))
 
-func _get_from_pool(pool: Array[Card], parent_container: Node) -> Card:
+func _get_from_pool(pool: Array, parent_container: Node) -> Card:
 	for card in pool:
 		if not card.visible:
 			if card.get_parent() != parent_container:
 				parent_container.add_child(card)
 			return card
 	var new_card: Card = card_scene.instantiate()
+	# ensure card has properties expected by the visual system
 	new_card.collision = false
 	parent_container.add_child(new_card)
 	new_card.visible = false
@@ -96,7 +110,10 @@ func _get_from_pool(pool: Array[Card], parent_container: Node) -> Card:
 
 # Setup card position, rotation, visibility, and animation
 func _setup_card(card: Card, target_pos: Vector2, target_rot: float, start_pos: Vector2) -> void:
-	card.global_position = start_pos
+	# Use local position (not global) so tween_property("position", ...) works consistently
+	card.position = start_pos
+	# keep rotation when starting from different point, else set immediately
+	card.rotation = target_rot if start_pos == target_pos else card.rotation
 	card.visible = true
 	if animate:
 		var t := create_tween()
@@ -112,13 +129,13 @@ func update_layout() -> void:
 	if not is_inside_tree():
 		return
 
-	# Save previous positions and rotations
+	# store previous positions/rotations of visible cards (local positions)
 	prev_positions.clear()
 	for c in attack_nodes + defense_nodes:
-		if c.visible:
+		if c and c.visible:
 			var key = get_card_key(c)
 			if key != -1:
-				prev_positions[key] = c.global_position
+				prev_positions[key] = c.position
 				prev_rotations[key] = c.rotation
 
 	var total_cards: int = pairs.size()
@@ -135,44 +152,58 @@ func update_layout() -> void:
 	var has_dragged := UIManager.is_dragging and UIManager.selected_card
 	var dragged_old_pos := Vector2.ZERO
 	if has_dragged:
+		# store global position of dragged card
 		dragged_old_pos = UIManager.selected_card.global_position
 
-	var used_attack_nodes: Array[Card] = []
-	var used_defense_nodes: Array[Card] = []
+	var used_attack_nodes: Array = []
+	var used_defense_nodes: Array = []
 
 	for i in range(total_cards):
 		var pair = pairs[i]
-		var row = i / 3
-		# ensure integer row (0 or 1)
-		row = int(row)
+		var row = int(i / 3)
 		var index_in_row = i % 3
 		var count_in_row = first_row_count if row == 0 else second_row_count
 		var pos_x = calc_x(index_in_row, count_in_row)
 		var pos_y = -row_offset / 2.0 if row == 0 else row_offset / 2.0
 
 		# ---------------- Attack Card -----------------
-		if pair["attack"]:
+		if pair.has("attack") and pair["attack"]:
 			var attack_card: Card = _get_from_pool(attack_nodes, $AttackContainer)
 			attack_card.init(pair["attack"])
 			var key = get_data_key(pair["attack"])
 			var target_pos = Vector2(pos_x, pos_y)
+			# preserve rotation if known, else choose random negative rotation for attack
 			var target_rot = prev_rotations.get(key, -get_random_rotation(min_rotation, max_rotation))
-			var start_pos = prev_positions[key] if prev_positions.has(key) else global_position + target_pos
+			var start_pos: Vector2
+			if prev_positions.has(key):
+				start_pos = prev_positions[key]
+			else:
+				start_pos = target_pos
+
+			# if dragging, convert dragged global pos into AttackContainer local space for start pos
 			if has_dragged and i == total_cards - 1:
-				start_pos = dragged_old_pos
+				start_pos = $AttackContainer.to_local(dragged_old_pos)
+
 			_setup_card(attack_card, target_pos, target_rot, start_pos)
 			used_attack_nodes.append(attack_card)
 
 		# ---------------- Defense Card -----------------
-		if pair["defense"]:
+		if pair.has("defense") and pair["defense"]:
 			var defense_card: Card = _get_from_pool(defense_nodes, $DefenseContainer)
 			defense_card.init(pair["defense"])
 			var key = get_data_key(pair["defense"])
 			var target_pos = Vector2(pos_x + defense_offset, pos_y + defense_offset)
 			var target_rot = prev_rotations.get(key, get_random_rotation(min_rotation, max_rotation))
-			var start_pos = prev_positions[key] if prev_positions.has(key) else global_position + target_pos
+			var start_pos: Vector2
+			if prev_positions.has(key):
+				start_pos = prev_positions[key]
+			else:
+				start_pos = target_pos
+
+			# if dragging, convert dragged global pos into DefenseContainer local space for start pos
 			if has_dragged and i == total_cards - 1:
-				start_pos = dragged_old_pos
+				start_pos = $DefenseContainer.to_local(dragged_old_pos)
+
 			_setup_card(defense_card, target_pos, target_rot, start_pos)
 			used_defense_nodes.append(defense_card)
 
@@ -200,31 +231,18 @@ func _update_attack_drop_area() -> void:
 
 # ---------------------- Transfer Logic -----------------------
 func get_can_transfer() -> bool:
-	if not GameManager.ruleset.translated_mode or pairs.size() < 1:
+	if not table:
 		return false
-	if GameManager.current_player != GameManager.player_defending:
-		return false
-	for pair in pairs:
-		if pair["defense"]:
-			return false
-
-	var rank: cd.Rank = pairs[0]["attack"].rank
-	var suits: Array[cd.Suit] = []
-	for pair in pairs:
-		if pair["attack"].rank != rank:
-			return false
-		suits.append(pair["attack"].suit)
-
-	ghost_data.rank = rank
-	var remained_suits = cd.ALL_SUITS.filter(func(x): return x not in suits)
-	ghost_data.suit = remained_suits.pick_random()
-	return true
+	return table.get_can_transfer()
 
 func set_ghost_appearance() -> void:
-	if not get_can_transfer():
+	# ask table to recompute ghost_data
+	if not table:
+		ghost_data = null
 		$TransferGhost.visible = false
 		return
-	$TransferGhost/Card.init(ghost_data)
+	table.set_ghost_appearance("TableContainer")
+	ghost_data = table.get_ghost_data()
 
 func update_transfer_ghost(enabled: bool) -> void:
 	var ghost := $TransferGhost
@@ -236,7 +254,6 @@ func update_transfer_ghost(enabled: bool) -> void:
 	var last_index = pairs.size() - 1
 	var row = int(last_index / 3)
 	var index_in_row = last_index % 3
-	# choose correct count_in_row depending on row
 	var count_in_row = min(pairs.size(), 3) if row == 0 else max(0, pairs.size() - 3)
 
 	var pos_x = calc_x(index_in_row, count_in_row) + card_spacing
@@ -262,8 +279,6 @@ func _find_pair_index_by_card(card: Card) -> int:
 			return i
 	return -1
 
-
-
 func update_highlight_to_selected() -> Dictionary:
 	var selected: Card = UIManager.selected_card
 	if not selected:
@@ -279,7 +294,6 @@ func _build_highlight_result(target: Card) -> Dictionary:
 	if not target:
 		return {}
 
-	# Check if transfer ghost
 	var ghost := $TransferGhost.get_node_or_null("Card")
 	if ghost and target == ghost:
 		return {
@@ -288,7 +302,6 @@ func _build_highlight_result(target: Card) -> Dictionary:
 			"card": target
 		}
 
-	# If normal card -> seek for index
 	var pair_idx := _find_pair_index_by_card(target)
 
 	return {
@@ -301,13 +314,12 @@ func _find_closest_table_card(player_pos: Vector2) -> Card:
 	var closest_card: Card = null
 	var closest_dist := INF
 
-	# Build set of attack instance ids that are defended (so we can skip them)
+	# build defended ids set from our mirror pairs
 	var defended_attack_ids := {}
 	for pair in pairs:
 		if pair["attack"] and pair["defense"] != null:
 			defended_attack_ids[get_data_key(pair["attack"])] = true
 
-	# ----------- Check all visible attack cards (skip defended) -------------
 	for attack_card in attack_nodes:
 		if not attack_card:
 			continue
@@ -318,13 +330,12 @@ func _find_closest_table_card(player_pos: Vector2) -> Card:
 			continue
 		var data_id = get_data_key(data)
 		if defended_attack_ids.has(data_id):
-			continue  # skip defended attack cards
+			continue
 		var d := player_pos.distance_to(attack_card.global_position)
 		if d < closest_dist:
 			closest_dist = d
 			closest_card = attack_card
 
-	# ----------- Check transfer ghost -------------------------------
 	var ghost := $TransferGhost
 	if ghost.visible:
 		var ghost_card := ghost.get_node_or_null("Card")
@@ -336,9 +347,7 @@ func _find_closest_table_card(player_pos: Vector2) -> Card:
 
 	return closest_card
 
-
 func _apply_highlight(target: Card) -> void:
-	# Turn off highlight on all attack and defense cards
 	for c in attack_nodes:
 		if c and c.visible:
 			c.highlight = (c == target)
@@ -347,7 +356,6 @@ func _apply_highlight(target: Card) -> void:
 		if c and c.visible:
 			c.highlight = false
 
-	# ghost highlight
 	var ghost := $TransferGhost
 	if ghost.visible:
 		var gcard := ghost.get_node_or_null("Card")
@@ -359,7 +367,6 @@ func _apply_highlight(target: Card) -> void:
 			else:
 				gcard.highlight = false
 				if sprite: sprite.modulate = Color(1, 1, 1, 0.5)
-
 
 func clear_all_highlights() -> void:
 	for c in attack_nodes:
@@ -378,7 +385,6 @@ func clear_all_highlights() -> void:
 	if sprite:
 		sprite.modulate = Color(1, 1, 1, 0.5)
 
-
 # ---------------------- Mouse Signals ------------------------
 func _on_attack_drop_area_mouse_entered() -> void:
 	if not UIManager.is_dragging:
@@ -387,3 +393,36 @@ func _on_attack_drop_area_mouse_entered() -> void:
 
 func _on_attack_drop_area_mouse_exited() -> void:
 	UIManager.in_action_area = false
+
+# ---------------------- Signal handlers from logical Table ----------------
+func _on_table_pairs_changed() -> void:
+	# mirror the logical pairs for rendering
+	if not table:
+		return
+	# shallow duplicate of pairs to avoid accidental edits
+	pairs = table.get_pairs()
+	# ensure arrays exist for pools (keep existing nodes so prev_positions are meaningful)
+	_update_pools_from_scene()
+	update_layout()
+
+func _on_table_ghost_changed() -> void:
+	if not table:
+		ghost_data = null
+	else:
+		ghost_data = table.get_ghost_data()
+	# update ghost card appearance
+	update_transfer_ghost(true if ghost_data else false)
+
+# Ensure we have at least some items in pools even if empty
+func _update_pools_from_scene() -> void:
+	# find nodes in containers (if any previously instantiated cards exist)
+	# keep attack_nodes/defense_nodes arrays (they contain pooled Card instances)
+	# This function is conservative: it doesn't remove nodes already stored in arrays.
+	if $AttackContainer:
+		for child in $AttackContainer.get_children():
+			if child and child is Card and child not in attack_nodes:
+				attack_nodes.append(child)
+	if $DefenseContainer:
+		for child in $DefenseContainer.get_children():
+			if child and child is Card and child not in defense_nodes:
+				defense_nodes.append(child)

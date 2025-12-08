@@ -11,6 +11,7 @@ var ruleset: RulesetBase = preload("res://Scripts/Logic/Rulesets/Variants/Classi
 var deck: Deck                                 ## Main deck used in the current game
 var discard_pile: DiscardPile                  ## Pile for discarded cards
 var table: Table
+var table_container: TableContainer
 var players: Array[Player] = []                ## List of all players (human and bots)
 var current_player: Player
 var players_attacking: Array[Player]
@@ -49,10 +50,20 @@ func start_game() -> void:
 	notify_players_trump()
 	discard_pile = DiscardPile.new()
 	table = Table.new()
+	table_container.table = table
+	table_container.init()
+	
 
 	# Deal cards to each player
 	for player in players:
 		for i in range(ruleset.cards_in_hand):
+			#if player == current_player:
+				#var attack = CardData.new()
+				#var defense = CardData.new()
+				#defense.rank = cd.Rank.ACE
+				#player.add_card(attack)
+				#player.add_card(defense)
+				#continue
 			player.add_card(deck.draw_card())
 
 func play_attack_card(player: Player, card: CardData) -> bool:

@@ -18,7 +18,6 @@ anchor_bottom = 0.51
 grow_vertical = 2
 mouse_filter = 1
 script = ExtResource("1_61wbx")
-card_scene = ExtResource("2_61wbx")
 metadata/_edit_use_anchors_ = true
 
 [node name="CardsCount" type="Label" parent="."]

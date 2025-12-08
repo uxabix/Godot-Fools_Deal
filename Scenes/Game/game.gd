@@ -65,11 +65,14 @@ func test_table_container() -> void:
 
 # Called once when the node enters the scene tree
 func _ready() -> void:
+	GameManager.table_container = $CanvasLayer/Control/TableContainer
 	UIManager.remove_preview_nodes(self)
-	GameManager.start_game()
-	deck.update_deck(GameManager.deck)
 	UIManager.player_hand = $CanvasLayer/PlayerHand/HandContainer
 	UIManager.table = $CanvasLayer/Control/TableContainer
+	
+	GameManager.start_game()
+	#
+	deck.update_deck(GameManager.deck)
 	$CanvasLayer/PlayerHand/HandContainer.set_cards(GameManager.current_player.hand, player_card_appearance)
 	draw_players()
 	
