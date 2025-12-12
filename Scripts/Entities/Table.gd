@@ -9,12 +9,12 @@ const cd = preload("res://Scripts/Utils/card_defines.gd")
 signal pairs_changed
 signal ghost_changed
 
-var DEBUG = false
+const DEBUG = false
 
 var max_pairs := 6
 
 var ruleset: RulesetBase
-var pairs: Array[Dictionary] = [] # { "attack": CardData, "defense": CardData }
+var pairs: Array[Dictionary] = [] # Array of { "attack": CardData, "defense": CardData }
 var ranks_on_table: Array[cd.Rank] = []
 var ghost_data: CardData = null
 
@@ -56,6 +56,19 @@ func add_defense(player: Player, card: CardData, attack_index: int) -> bool:
 	emit_signal("ghost_changed")
 	on_any_change("Add defense")
 	return true
+	
+# return an array of { "attack": CardData, "index": attack_index, }
+func get_cards_to_defend() -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for pair_i in range(len(pairs)):
+		if pairs[pair_i]["defense"] == null:
+			var data := {
+				"attack": pairs[pair_i]["attack"],
+				"index": pair_i,
+			} 
+			result.append(data)
+	
+	return result
 
 func clear() -> void:
 	pairs.clear()

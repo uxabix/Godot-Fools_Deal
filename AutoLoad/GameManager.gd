@@ -17,6 +17,9 @@ var current_player: Player
 var players_attacking: Array[Player]
 var player_defending: Player
 
+var current_player_index := 0
+var player_defending_index := 0
+
 ##
 # Creates and initializes players.
 # @param player_count - number of human players
@@ -36,15 +39,29 @@ func notify_players_trump():
 	for player in players:
 		player.trump = trump
 
+func get_attacking_players(only_previous:=true, only_neigbours:=false) -> Array[Player]:
+	if only_neigbours:
+		return [] # TODO
+	if only_previous:
+		var i := player_defending_index - 1
+		if i < 0:
+			i = len(players) - i
+		return [players[i]]
+	
+	# !!! TODO current functionality also includes players that already won! CHANGE!
+	var result = players.duplicate_deep()
+	result.remove_at(player_defending_index)
+	return result
+
 ##
 # Starts a new game session.
 # Initializes players, deck, ruleset, and deals cards.
 ##
 func start_game() -> void:
 	set_players(ruleset.common_options.players_count, ruleset.common_options.bot_count)
-	current_player = players[0]
+	current_player = players[current_player_index]
 	players_attacking = [players[0]]
-	player_defending = players[0]
+	player_defending = players[player_defending_index]
 	deck = Deck.new(ruleset)
 	trump = deck.trump.suit
 	notify_players_trump()
@@ -53,7 +70,6 @@ func start_game() -> void:
 	table_container.table = table
 	table_container.init()
 	
-
 	# Deal cards to each player
 	for player in players:
 		for i in range(ruleset.cards_in_hand):
@@ -65,6 +81,9 @@ func start_game() -> void:
 				#player.add_card(defense)
 				#continue
 			player.add_card(deck.draw_card())
+
+func finish_turn():
+	pass
 
 func play_attack_card(player: Player, card: CardData) -> bool:
 	return table.add_attack(player, card)

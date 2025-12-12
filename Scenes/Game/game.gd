@@ -59,16 +59,16 @@ func test_table_container() -> void:
 	cardDefense.suit = cd.Suit.SPADES
 	
 	for i in range(6):
-		$CanvasLayer/Control/TableContainer.add_attack(cardAttack)
+		$CanvasLayer/ContainerControl/TableContainer.add_attack(cardAttack)
 	for i in range(0):
-		$CanvasLayer/Control/TableContainer.add_defense(i, cardDefense)
+		$CanvasLayer/ContainerControl/TableContainer.add_defense(i, cardDefense)
 
 # Called once when the node enters the scene tree
 func _ready() -> void:
-	GameManager.table_container = $CanvasLayer/Control/TableContainer
+	GameManager.table_container = $CanvasLayer/ContainerControl/TableContainer
 	UIManager.remove_preview_nodes(self)
 	UIManager.player_hand = $CanvasLayer/PlayerHand/HandContainer
-	UIManager.table = $CanvasLayer/Control/TableContainer
+	UIManager.table = $CanvasLayer/ContainerControl/TableContainer
 	
 	GameManager.start_game()
 	#
@@ -81,3 +81,7 @@ func _ready() -> void:
 # Called every frame (currently unused)
 func _process(_delta: float) -> void:
 	pass
+
+
+func _on_turn_button_pressed() -> void:
+	pass # Replace with function body.
