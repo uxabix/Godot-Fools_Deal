@@ -136,7 +136,6 @@ func stop_animation() -> void:
 
 # Triggered when the mouse cursor enters the card's hover area
 func _on_hover_area_mouse_entered() -> void:
-	print("HERE")
 	if not animate:
 		return
 	play_animation("Hover")

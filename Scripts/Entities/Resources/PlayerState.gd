@@ -5,7 +5,8 @@ enum Type {
 	ATTACK,
 	DEFEND,
 	PASS,
-	TAKE_CARDS
+	TAKE_CARDS,
+	LEFT
 }
 
 static func get_state(state: Type) -> String:
@@ -20,5 +21,7 @@ static func get_state(state: Type) -> String:
 			return "Pass"
 		Type.TAKE_CARDS:
 			return "Take"
+		Type.LEFT:
+			return "Left"
 	
 	return "NONE" 

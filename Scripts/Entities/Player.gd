@@ -11,7 +11,7 @@ const cd = preload("res://Scripts/Utils/card_defines.gd")
 var player_name: String                 ## Player display name
 var id                                  ## Player unique identifier
 var type                                ## Type of player (human, AI, etc.)
-var state: PlayerState.Type = PlayerState.Type.IDLE ## Current player state (IDLE, ATTACK, DEFEND, PASS, TAKE_CARDS)
+var state: PlayerState.Type = PlayerState.Type.IDLE ## Current player state (IDLE, ATTACK, DEFEND, ...)
 var strategy                            ## Strategy logic (for AI-controlled players)
 var hand: Array[CardData]               ## Cards currently held by the player
 var trump: cd.Suit                      ## Trump suit in cuurent game, used in sort_hand

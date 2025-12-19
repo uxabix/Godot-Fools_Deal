@@ -18,7 +18,7 @@ var players_attacking: Array[Player]
 var player_defending: Player
 
 var current_player_index := 0
-var player_defending_index := 1
+var player_defending_index := 0
 
 ##
 # Creates and initializes players.
@@ -60,8 +60,7 @@ func get_attacking_players(only_previous:=true, only_neigbours:=false) -> Array[
 func start_game() -> void:
 	set_players(ruleset.common_options.players_count, ruleset.common_options.bot_count)
 	current_player = players[current_player_index]
-	players_attacking = [players[current_player_index]]
-	player_defending = players[player_defending_index]
+	start_next_turn()
 	deck = Deck.new(ruleset)
 	trump = deck.trump.suit
 	notify_players_trump()
@@ -100,9 +99,22 @@ func start_next_turn():
 	players_attacking = [players[player_attacking_index]]
 	update_players_attacking_state()
 
+func set_player_state(player: Player, state: PlayerState.Type):
+	player.state = state
+	finish_turn()
+
+func can_finish_turn():
+	for player: Player in players:
+		if player.state not in [PlayerState.Type.PASS, PlayerState.Type.LEFT]:
+			return false	
+	return true
+
 func finish_turn():
-	if false:
+	print("Try finish turn")
+	if not can_finish_turn():
 		return
+		
+	print("Finish turn")
 	
 	for player: Player in players:
 		player.state = PlayerState.Type.IDLE

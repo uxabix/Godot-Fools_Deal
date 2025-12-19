@@ -27,8 +27,8 @@ const cd = preload("res://Scripts/Utils/card_defines.gd")
 
 func clear_enemy_hand_container():
 	for child in $CanvasLayer/EnemyContainer/EnemyHandContainer.get_children():
-		if "HandContainer" in child.name:
-			child.queue_free()
+		if child is HandContainer:
+			$CanvasLayer/EnemyContainer/EnemyHandContainer.remove_child(child)
 
 func create_container(player: Player) -> Node:
 	var enemy_hand = hand_container.instantiate()
@@ -65,11 +65,11 @@ func test_table_container() -> void:
 
 func update_players_state():
 	$CanvasLayer/Label.text = ""
-	for container: HandContainer in $CanvasLayer/EnemyContainer.get_children():
+	for container: HandContainer in $CanvasLayer/EnemyContainer/EnemyHandContainer.get_children():
 		$CanvasLayer/Label.text += str(container.player_id) + ": "
 		$CanvasLayer/Label.text += PlayerState.get_state(GameManager.players[container.player_id].state)
 		$CanvasLayer/Label.text += " "
-	$CanvasLayer/Label.text += str(GameManager.current_player.id) + ": "
+	$CanvasLayer/Label.text += "Player: "
 	$CanvasLayer/Label.text += PlayerState.get_state(GameManager.current_player.state)
 	
 # Called once when the node enters the scene tree
@@ -84,6 +84,7 @@ func _ready() -> void:
 	deck.update_deck(GameManager.deck)
 	$CanvasLayer/PlayerHand/HandContainer.set_cards(GameManager.current_player.hand, player_card_appearance)
 	draw_players()
+	update_players_state()
 	
 	#test_table_container()
 
@@ -93,4 +94,9 @@ func _process(_delta: float) -> void:
 
 
 func _on_turn_button_pressed() -> void:
-	pass # Replace with function body.
+	if GameManager.current_player in GameManager.players_attacking:
+		GameManager.set_player_state(GameManager.current_player, PlayerState.Type.PASS)
+	elif GameManager.current_player == GameManager.player_defending:
+		GameManager.set_player_state(GameManager.current_player, PlayerState.Type.TAKE_CARDS)
+	
+	update_players_state()
