@@ -19,7 +19,7 @@ const cd = preload("res://Scripts/Utils/card_defines.gd")
 
 @export var deck: Node;
 
-@export var see_enemy_cards: bool = false ## Enable in game drawing of enemy cards faces (Debug)
+@export var show_enemy_cards: bool = false ## Enable in game drawing of enemy cards faces (Debug)
 
 # ------------------------------------------------------------------------------
 # Lifecycle
@@ -40,7 +40,7 @@ func create_container(player: Player) -> Node:
 
 func draw_cards(container: Node):
 	var player := GameManager.players[container.player_id]
-	container.set_cards(player.hand, player_card_appearance if see_enemy_cards else enemy_card_appearance)
+	container.set_cards(player.hand, player_card_appearance if show_enemy_cards else enemy_card_appearance)
 
 func draw_players():
 	clear_enemy_hand_container()
@@ -63,6 +63,15 @@ func test_table_container() -> void:
 	for i in range(0):
 		$CanvasLayer/ContainerControl/TableContainer.add_defense(i, cardDefense)
 
+func update_players_state():
+	$CanvasLayer/Label.text = ""
+	for container: HandContainer in $CanvasLayer/EnemyContainer.get_children():
+		$CanvasLayer/Label.text += str(container.player_id) + ": "
+		$CanvasLayer/Label.text += PlayerState.get_state(GameManager.players[container.player_id].state)
+		$CanvasLayer/Label.text += " "
+	$CanvasLayer/Label.text += str(GameManager.current_player.id) + ": "
+	$CanvasLayer/Label.text += PlayerState.get_state(GameManager.current_player.state)
+	
 # Called once when the node enters the scene tree
 func _ready() -> void:
 	GameManager.table_container = $CanvasLayer/ContainerControl/TableContainer

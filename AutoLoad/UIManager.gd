@@ -72,11 +72,10 @@ func _input(event: InputEvent) -> void:
 # Only the hovered card (or all, if none is hovered) will have collision enabled.
 ##
 func set_collisions() -> void:
-	var i: int = 0
+	var i := 0
 	for card: Card in player_hand.get_children():
 		card.collision = card_hovered == i or card_hovered == null
 		i += 1
-
 
 # ------------------------------------------------------------------------------
 # UI helper functions

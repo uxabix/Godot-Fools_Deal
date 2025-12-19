@@ -30,7 +30,6 @@ func _ready() -> void:
 
 	call_deferred("_deferred_update_layout")
 
-
 # Respond to editor transformations (for live layout updates)
 func _notification(what: int) -> void:
 	if Engine.is_editor_hint():

@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://c21jbfo7ww31x"]
+[gd_scene load_steps=9 format=3 uid="uid://c21jbfo7ww31x"]
 
 [ext_resource type="PackedScene" uid="uid://dxr7phpxd7qol" path="res://Scenes/Card/card.tscn" id="1_mv0hc"]
 [ext_resource type="Script" uid="uid://ci2dpyf87xojq" path="res://Scenes/Game/game.gd" id="1_qxfds"]
@@ -7,6 +7,10 @@
 [ext_resource type="PackedScene" uid="uid://drahpkjcher6g" path="res://Scenes/HandContainer/HandContainer.tscn" id="4_i1e5p"]
 [ext_resource type="Resource" uid="uid://ljpbhmsx4ie6" path="res://Scripts/Entities/Resources/HandContainer/Variants/EnemyHand.tres" id="5_flgk0"]
 [ext_resource type="PackedScene" uid="uid://b5ltsa1oucaxe" path="res://Scenes/TableContainer/TableContainer.tscn" id="7_vifcx"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_vifcx"]
+font_size = 26
+font_color = Color(0.056291588, 0.056291603, 0.056291595, 1)
 
 [node name="Game" type="Node2D" node_paths=PackedStringArray("deck")]
 script = ExtResource("1_qxfds")
@@ -28,7 +32,7 @@ scale = Vector2(0.75, -0.75)
 
 [node name="HandContainer7" parent="CanvasLayer/EnemyContainer/EnemyHandContainer" instance=ExtResource("4_i1e5p")]
 position = Vector2(307.2, 0)
-scale = Vector2(0.97307783, 0.97307783)
+scale = Vector2(0.9730824, 0.9730824)
 appearance = ExtResource("5_flgk0")
 
 [node name="PreviewTrump2" parent="CanvasLayer/EnemyContainer/EnemyHandContainer/HandContainer7" instance=ExtResource("1_mv0hc")]
@@ -79,7 +83,7 @@ animate = true
 
 [node name="HandContainer8" parent="CanvasLayer/EnemyContainer/EnemyHandContainer" instance=ExtResource("4_i1e5p")]
 position = Vector2(614.4, 0)
-scale = Vector2(0.97307783, 0.97307783)
+scale = Vector2(0.9730824, 0.9730824)
 appearance = ExtResource("5_flgk0")
 
 [node name="PreviewTrump2" parent="CanvasLayer/EnemyContainer/EnemyHandContainer/HandContainer8" instance=ExtResource("1_mv0hc")]
@@ -130,7 +134,7 @@ animate = true
 
 [node name="HandContainer10" parent="CanvasLayer/EnemyContainer/EnemyHandContainer" instance=ExtResource("4_i1e5p")]
 position = Vector2(921.6, 0)
-scale = Vector2(0.97307783, 0.97307783)
+scale = Vector2(0.9730824, 0.9730824)
 appearance = ExtResource("5_flgk0")
 
 [node name="PreviewTrump2" parent="CanvasLayer/EnemyContainer/EnemyHandContainer/HandContainer10" instance=ExtResource("1_mv0hc")]
@@ -181,7 +185,7 @@ animate = true
 
 [node name="HandContainer11" parent="CanvasLayer/EnemyContainer/EnemyHandContainer" instance=ExtResource("4_i1e5p")]
 position = Vector2(1228.8, 0)
-scale = Vector2(0.97307783, 0.97307783)
+scale = Vector2(0.9730824, 0.9730824)
 appearance = ExtResource("5_flgk0")
 
 [node name="PreviewTrump2" parent="CanvasLayer/EnemyContainer/EnemyHandContainer/HandContainer11" instance=ExtResource("1_mv0hc")]
@@ -324,5 +328,21 @@ anchor_bottom = 1.0
 grow_horizontal = 0
 grow_vertical = 2
 text = "TURN"
+
+[node name="Label" type="Label" parent="CanvasLayer"]
+z_index = 1
+anchors_preset = -1
+anchor_left = 0.34500003
+anchor_top = 0.36600003
+anchor_right = 0.523
+anchor_bottom = 0.537
+offset_left = 393.55997
+offset_top = -95.168015
+offset_right = 545.928
+offset_bottom = 125.02399
+mouse_filter = 1
+text = "NONE"
+label_settings = SubResource("LabelSettings_vifcx")
+autowrap_mode = 2
 
 [connection signal="pressed" from="CanvasLayer/ButtonsControl/TurnButton" to="." method="_on_turn_button_pressed"]
