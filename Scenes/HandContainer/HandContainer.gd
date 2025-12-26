@@ -13,7 +13,7 @@ class_name HandContainer
 # ------------------------------------------------------------------------------
 
 @export var appearance: HandContainerData = preload("res://Scripts/Entities/Resources/HandContainer/Variants/PlayerHand.tres")
-var player_id: int = 0
+var player: Player
 
 var card_scene = preload("res://Scenes/Card/card.tscn")
 

@@ -25,11 +25,22 @@ var player_defending_index := 0
 # @param player_count - number of human players
 # @param bot_count - number of AI players
 ##
+func set_bot(player: Player):
+	player.type = "Bot"
+	player.strategy = EasyStrategy.new(player)
+
+func set_player(player: Player):
+	player.type = "Player"
+	player.strategy = PlayerStrategy.new(player)
+
 func set_players(player_count: int, bot_count: int = 0) -> void:
 	for i in range(player_count + bot_count):
 		var player: Player = Player.new()
-		player.type = "Player" if i < player_count else "Bot"
 		player.id = i
+		if i < player_count:
+			set_player(player)
+		else:
+			set_bot(player)
 		players.append(player)
 
 ##
@@ -105,7 +116,9 @@ func set_player_state(player: Player, state: PlayerState.Type):
 
 func can_finish_turn():
 	for player: Player in players:
-		if player.state not in [PlayerState.Type.PASS, PlayerState.Type.LEFT]:
+		if player.state not in [PlayerState.Type.PASS,
+								PlayerState.Type.LEFT,
+								PlayerState.Type.TAKE_CARDS]:
 			return false	
 	return true
 
@@ -119,8 +132,32 @@ func finish_turn():
 	for player: Player in players:
 		player.state = PlayerState.Type.IDLE
 
+func notify_defender():
+	player_defending.play()
+	finish_turn()
+	
+func notify_attackers():
+	for player in players_attacking:
+		set_player_state(player, PlayerState.Type.ATTACK)
+	
+func check_defended() -> bool:
+	for pair in table.pairs:
+		if pair["defense"] == null:
+			return false
+	
+	player_defending.state = PlayerState.Type.PASS
+	return true
+
 func play_attack_card(player: Player, card: CardData) -> bool:
-	return table.add_attack(player, card)
+	var success : bool = table.add_attack(player, card)
+	if success:
+		set_player_state(player, PlayerState.Type.ATTACK)
+		notify_defender()
+	return success
 	
 func play_defense_card(player: Player, card: CardData, attack_index: int) -> bool:
-	return table.add_defense(player, card, attack_index)
+	var success : bool = table.add_defense(player, card, attack_index)
+	if success:
+		notify_attackers()
+		check_defended()
+	return success

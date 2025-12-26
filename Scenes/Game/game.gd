@@ -32,14 +32,14 @@ func clear_enemy_hand_container():
 
 func create_container(player: Player) -> Node:
 	var enemy_hand = hand_container.instantiate()
-	enemy_hand.player_id = player.id
+	enemy_hand.player = player
 	enemy_hand.appearance = enemy_hand_container_data
 	$CanvasLayer/EnemyContainer/EnemyHandContainer.add_child(enemy_hand)
 
 	return enemy_hand
 
 func draw_cards(container: Node):
-	var player := GameManager.players[container.player_id]
+	var player : Player = container.player
 	container.set_cards(player.hand, player_card_appearance if show_enemy_cards else enemy_card_appearance)
 
 func draw_players():
@@ -66,8 +66,8 @@ func test_table_container() -> void:
 func update_players_state():
 	$CanvasLayer/Label.text = ""
 	for container: HandContainer in $CanvasLayer/EnemyContainer/EnemyHandContainer.get_children():
-		$CanvasLayer/Label.text += str(container.player_id) + ": "
-		$CanvasLayer/Label.text += PlayerState.get_state(GameManager.players[container.player_id].state)
+		$CanvasLayer/Label.text += str(container.player.id) + ": "
+		$CanvasLayer/Label.text += PlayerState.get_state(container.player.state)
 		$CanvasLayer/Label.text += " "
 	$CanvasLayer/Label.text += "Player: "
 	$CanvasLayer/Label.text += PlayerState.get_state(GameManager.current_player.state)

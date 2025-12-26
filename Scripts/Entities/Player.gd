@@ -10,12 +10,15 @@ const cd = preload("res://Scripts/Utils/card_defines.gd")
 
 var player_name: String                 ## Player display name
 var id                                  ## Player unique identifier
-var type                                ## Type of player (human, AI, etc.)
+var type                                ## Type of player (human, AI, etc.) # TODO Replace strings with an enum
 var state: PlayerState.Type = PlayerState.Type.IDLE ## Current player state (IDLE, ATTACK, DEFEND, ...)
-var strategy                            ## Strategy logic (for AI-controlled players)
+var strategy: MoveStrategy               ## Move strategy logic
 var hand: Array[CardData]               ## Cards currently held by the player
 var trump: cd.Suit                      ## Trump suit in cuurent game, used in sort_hand
 
+
+func play() -> Dictionary:
+	return strategy.play_move()
 
 ##
 # Sorts the player's hand based on suit and rank.
@@ -48,6 +51,11 @@ func add_card(card: CardData):
 	hand.append(card)
 	sort_hand()
 	
-func draw_card(card: CardData):
-	hand.erase(card)
-	sort_hand()
+func draw_card(card: CardData) -> bool:
+	for c_i in len(hand):
+		if card.equals(hand[c_i]):
+			hand.pop_at(c_i)
+			sort_hand()
+			return true
+	
+	return false

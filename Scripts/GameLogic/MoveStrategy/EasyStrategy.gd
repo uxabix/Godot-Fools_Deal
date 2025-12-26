@@ -1,4 +1,4 @@
-extends BotStrategy
+extends MoveStrategy
 class_name EasyStrategy
 
 ## Very dumb strategy:
@@ -6,10 +6,16 @@ class_name EasyStrategy
 ## - Defends with the smallest possible card
 ## - Avoids complex logic
 
-func get_move(player: Player):
+func play_move() -> Dictionary:
+	var move := get_move()
+	var result := executor.execute_turn(move)
+	assert(result, "Can't execute turn! - %s" % move)
+	return move
+
+func get_move() -> Dictionary:
 	var hand = player.hand
 	if hand.is_empty():
-		return { "action": "empty_hand" }
+		return { "action": TurnType.Type.HAND_EMPTY }
 		
 	if player in GameManager.players_attacking:
 		return _attack(hand)
@@ -17,7 +23,7 @@ func get_move(player: Player):
 	if GameManager.player_defending:
 		return _defend(player, hand)
 
-	return { "action": "pass" }
+	return { "action": TurnType.Type.PASS }
 
 
 func _attack(hand: Array[CardData]):
@@ -32,7 +38,7 @@ func _attack(hand: Array[CardData]):
 	candidates.sort_custom(func(a, b): return a.rank_value < b.rank_value)
 
 	return {
-		"action": "attack",
+		"action": TurnType.Type.ATTACK,
 		"card": candidates[0]
 	}
 
@@ -49,7 +55,7 @@ func sort_cards_by_rank(cards: Array[CardData]) -> void:
 	)
 
 func _defend(player: Player, hand: Array[CardData]):
-	var result = { "action": "defense", "data": []}
+	var result = { "action": TurnType.Type.DEFENSE, "data": []}
 	var attack_cards := GameManager.table.get_cards_to_defend()
 	var remained_in_hand = hand.duplicate_deep()
 	sort_cards_by_rank(remained_in_hand)
@@ -63,6 +69,6 @@ func _defend(player: Player, hand: Array[CardData]):
 				is_grabbing = false
 				break
 		if is_grabbing:
-			return {"action": "grab"}
+			return {"action": TurnType.Type.TAKE_CARDS}
 				
 	return result
