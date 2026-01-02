@@ -31,16 +31,17 @@ func clear_enemy_hand_container():
 			$CanvasLayer/EnemyContainer/EnemyHandContainer.remove_child(child)
 
 func create_container(player: Player) -> Node:
-	var enemy_hand = hand_container.instantiate()
+	var enemy_hand := hand_container.instantiate()
 	enemy_hand.player = player
-	enemy_hand.appearance = enemy_hand_container_data
+	enemy_hand.data = enemy_hand_container_data
+	enemy_hand.appearance = enemy_card_appearance
 	$CanvasLayer/EnemyContainer/EnemyHandContainer.add_child(enemy_hand)
 
 	return enemy_hand
 
 func draw_cards(container: Node):
 	var player : Player = container.player
-	container.set_cards(player.hand, player_card_appearance if show_enemy_cards else enemy_card_appearance)
+	container.set_cards(player.hand)
 
 func draw_players():
 	clear_enemy_hand_container()
@@ -71,7 +72,7 @@ func update_players_state():
 		$CanvasLayer/Label.text += " "
 	$CanvasLayer/Label.text += "Player: "
 	$CanvasLayer/Label.text += PlayerState.get_state(GameManager.current_player.state)
-	
+
 # Called once when the node enters the scene tree
 func _ready() -> void:
 	GameManager.table_container = $CanvasLayer/ContainerControl/TableContainer
@@ -80,9 +81,11 @@ func _ready() -> void:
 	UIManager.table = $CanvasLayer/ContainerControl/TableContainer
 	
 	GameManager.start_game()
+	$CanvasLayer/PlayerHand/HandContainer.appearance = player_card_appearance
+	$CanvasLayer/PlayerHand/HandContainer.player = GameManager.current_player
 	#
 	deck.update_deck(GameManager.deck)
-	$CanvasLayer/PlayerHand/HandContainer.set_cards(GameManager.current_player.hand, player_card_appearance)
+	$CanvasLayer/PlayerHand/HandContainer.set_cards(GameManager.current_player.hand)
 	draw_players()
 	update_players_state()
 	

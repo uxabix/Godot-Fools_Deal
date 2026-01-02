@@ -1,11 +1,10 @@
-[gd_scene load_steps=9 format=3 uid="uid://c21jbfo7ww31x"]
+[gd_scene load_steps=8 format=3 uid="uid://c21jbfo7ww31x"]
 
 [ext_resource type="PackedScene" uid="uid://dxr7phpxd7qol" path="res://Scenes/Card/card.tscn" id="1_mv0hc"]
 [ext_resource type="Script" uid="uid://ci2dpyf87xojq" path="res://Scenes/Game/game.gd" id="1_qxfds"]
 [ext_resource type="PackedScene" uid="uid://bqc61ptdaq64p" path="res://Scenes/DeckContainer/deck_container.tscn" id="3_ciybh"]
 [ext_resource type="PackedScene" uid="uid://r3hawph0ssen" path="res://Scenes/EnemyHandContainer/EnemyHandContainer.tscn" id="4_ciybh"]
 [ext_resource type="PackedScene" uid="uid://drahpkjcher6g" path="res://Scenes/HandContainer/HandContainer.tscn" id="4_i1e5p"]
-[ext_resource type="Resource" uid="uid://ljpbhmsx4ie6" path="res://Scripts/Entities/Resources/HandContainer/Variants/EnemyHand.tres" id="5_flgk0"]
 [ext_resource type="PackedScene" uid="uid://b5ltsa1oucaxe" path="res://Scenes/TableContainer/TableContainer.tscn" id="7_vifcx"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_vifcx"]
@@ -33,7 +32,7 @@ scale = Vector2(0.75, -0.75)
 [node name="PreviewHandContainer7" parent="CanvasLayer/EnemyContainer/EnemyHandContainer" instance=ExtResource("4_i1e5p")]
 position = Vector2(307.2, 0)
 scale = Vector2(0.97307783, 0.97307783)
-appearance = ExtResource("5_flgk0")
+data = null
 
 [node name="PreviewTrump2" parent="CanvasLayer/EnemyContainer/EnemyHandContainer/PreviewHandContainer7" instance=ExtResource("1_mv0hc")]
 position = Vector2(-62.5, -20)
@@ -84,7 +83,7 @@ animate = true
 [node name="PreviewHandContainer8" parent="CanvasLayer/EnemyContainer/EnemyHandContainer" instance=ExtResource("4_i1e5p")]
 position = Vector2(614.4, 0)
 scale = Vector2(0.97307783, 0.97307783)
-appearance = ExtResource("5_flgk0")
+data = null
 
 [node name="PreviewTrump2" parent="CanvasLayer/EnemyContainer/EnemyHandContainer/PreviewHandContainer8" instance=ExtResource("1_mv0hc")]
 position = Vector2(-62.5, -20)
@@ -135,7 +134,7 @@ animate = true
 [node name="PreviewHandContainer10" parent="CanvasLayer/EnemyContainer/EnemyHandContainer" instance=ExtResource("4_i1e5p")]
 position = Vector2(921.6, 0)
 scale = Vector2(0.97307783, 0.97307783)
-appearance = ExtResource("5_flgk0")
+data = null
 
 [node name="PreviewTrump2" parent="CanvasLayer/EnemyContainer/EnemyHandContainer/PreviewHandContainer10" instance=ExtResource("1_mv0hc")]
 position = Vector2(-62.5, -20)
@@ -186,7 +185,7 @@ animate = true
 [node name="PreviewHandContainer11" parent="CanvasLayer/EnemyContainer/EnemyHandContainer" instance=ExtResource("4_i1e5p")]
 position = Vector2(1228.8, 0)
 scale = Vector2(0.97307783, 0.97307783)
-appearance = ExtResource("5_flgk0")
+data = null
 
 [node name="PreviewTrump2" parent="CanvasLayer/EnemyContainer/EnemyHandContainer/PreviewHandContainer11" instance=ExtResource("1_mv0hc")]
 position = Vector2(-62.5, -20)
@@ -250,6 +249,7 @@ mouse_filter = 1
 metadata/_edit_use_anchors_ = true
 
 [node name="HandContainer" parent="CanvasLayer/PlayerHand" instance=ExtResource("4_i1e5p")]
+appearance = null
 
 [node name="PreviewTrump2" parent="CanvasLayer/PlayerHand/HandContainer" instance=ExtResource("1_mv0hc")]
 position = Vector2(-200, -20)

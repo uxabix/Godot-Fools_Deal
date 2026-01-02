@@ -1,6 +1,8 @@
 extends Node
 class_name Player
 
+signal move_evoked(player_id: int)
+
 ##
 # Represents a player entity in the game.
 # Holds player-related data such as hand, state, and strategy.
@@ -18,7 +20,9 @@ var trump: cd.Suit                      ## Trump suit in cuurent game, used in s
 
 
 func play() -> Dictionary:
-	return strategy.play_move()
+	var result := strategy.play_move()
+	move_evoked.emit(id)
+	return result
 
 ##
 # Sorts the player's hand based on suit and rank.

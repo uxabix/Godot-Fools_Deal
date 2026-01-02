@@ -10,16 +10,19 @@ func parse_attack(turn: Dictionary) -> bool:
 	if turn["action"] != TurnType.Type.ATTACK:
 		return false
 	
-	return GameManager.play_attack_card(player, turn["card"])
+	if GameManager.play_attack_card(player, turn["card"]):
+		assert(player.draw_card(turn["card"]))
+		return true
+	return false
 
 func parse_defense(turn: Dictionary) -> bool:
 	if turn["action"] != TurnType.Type.DEFENSE:
 		return false
 	for details in turn["data"]:
-		if GameManager.play_defense_card(player, details["defense"], details["index"]):
-			assert(player.draw_card(details["defense"]))
-		else:
+		if not GameManager.play_defense_card(player, details["defense"], details["index"]):
 			return false
+		assert(player.draw_card(details["defense"]))
+		
 	return true
 
 func parse_pass(turn: Dictionary) -> bool:

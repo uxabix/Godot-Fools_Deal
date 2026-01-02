@@ -19,27 +19,20 @@ var selected_card: Card
 
 var highlited_card: Dictionary
 
-func try_attack() -> bool:
-	return GameManager.play_attack_card(GameManager.current_player, selected_card.get_data())
-
-func try_defend() -> bool:
-	if highlited_card.size() < 3:
+func make_move() -> bool:
+	var player := GameManager.current_player
+	if not player.strategy is PlayerStrategy:
 		return false
-	return GameManager.play_defense_card(GameManager.current_player, selected_card.get_data(), highlited_card["index"])
+	var strategy : PlayerStrategy = player.strategy
+	strategy.card_played = selected_card.get_data()
+	strategy.target = highlited_card
+	GameManager.player_move()
+	return true
 
-func update_ui_attack():
-	player_hand.remove_child(selected_card)
-
-func update_ui_defend():
-	player_hand.remove_child(selected_card)
-	
 func _input(event: InputEvent) -> void:
 	if selected_card and Input.is_action_just_released("LMB"):
 		selected_card.stop_animation()
-		if in_action_area and try_attack():
-			update_ui_attack()
-		elif try_defend():
-			update_ui_defend()
+		make_move()
 		dragging_just_started = 1
 		selected_card = null
 		is_dragging = false

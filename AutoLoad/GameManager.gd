@@ -148,6 +148,9 @@ func check_defended() -> bool:
 	player_defending.state = PlayerState.Type.PASS
 	return true
 
+func player_move():
+	current_player.play()
+
 func play_attack_card(player: Player, card: CardData) -> bool:
 	var success : bool = table.add_attack(player, card)
 	if success:

@@ -12,8 +12,12 @@ class_name HandContainer
 # Layout Configuration
 # ------------------------------------------------------------------------------
 
-@export var appearance: HandContainerData = preload("res://Scripts/Entities/Resources/HandContainer/Variants/PlayerHand.tres")
-var player: Player
+@export var data: HandContainerData = preload("res://Scripts/Entities/Resources/HandContainer/Variants/PlayerHand.tres")
+@export var appearance: CardAppearanceData = preload("res://Scripts/Entities/Resources/CardAppearance/Variants/Player.tres")
+var player: Player = null:
+	set(value):
+		player = value
+		player.move_evoked.connect(_update_hand)
 
 var card_scene = preload("res://Scenes/Card/card.tscn")
 
@@ -29,6 +33,21 @@ func _ready() -> void:
 	child_exiting_tree.connect(_on_child_changed)
 
 	call_deferred("_deferred_update_layout")
+
+func has_in_hand(to_find: Card) -> int:
+	for card in len(player.hand):
+		if player.hand[card].equals(to_find.get_data()):
+			return card
+	
+	return -1
+
+func has_in_ui():
+	pass
+
+func _update_hand(id):
+	for child in get_children():
+		if child is Card and has_in_hand(child) == -1:
+			remove_child(child)
 
 # Respond to editor transformations (for live layout updates)
 func _notification(what: int) -> void:
@@ -74,14 +93,14 @@ func update_layout() -> void:
 		return
 
 	# Recompute geometry using effective_count (treating dragged card as absent)
-	var total_width := (effective_count - 1) * appearance.spacing
+	var total_width := (effective_count - 1) * data.spacing
 	var start_x := -total_width * 0.5
-	var center_y := appearance.vertical_offset
+	var center_y := data.vertical_offset
 	var center_index := (effective_count - 1) / 2.0
 
 	var angle_step := 0.0
-	if appearance.fan_angle != 0.0:
-		angle_step = deg_to_rad(appearance.fan_angle) / max(effective_count - 1, 1)
+	if data.fan_angle != 0.0:
+		angle_step = deg_to_rad(data.fan_angle) / max(effective_count - 1, 1)
 
 	# Iterate physical children but map them into virtual indices that skip the ignored one.
 	# virtual_index runs from 0..effective_count-1
@@ -97,25 +116,25 @@ func update_layout() -> void:
 			continue
 
 		# Compute position based on virtual_index (0..effective_count-1)
-		var pos_x := start_x + virtual_index * appearance.spacing
+		var pos_x := start_x + virtual_index * data.spacing
 
 		var offset: float = 0.0
 		if center_index != 0:
 			offset = (virtual_index - center_index) / center_index
 
-		var pos_y: float = center_y + appearance.y_spacing * -cos(offset * PI * 0.5)
+		var pos_y: float = center_y + data.y_spacing * -cos(offset * PI * 0.5)
 		var target_pos := Vector2(pos_x, pos_y)
 
 		# Calculate rotation to create the fan effect (based on virtual index)
 		var target_rot := 0.0
-		if appearance.fan_angle != 0.0 and center_index != 0:
-			target_rot = -deg_to_rad(appearance.fan_angle) * 0.5 + virtual_index * angle_step
+		if data.fan_angle != 0.0 and center_index != 0:
+			target_rot = -deg_to_rad(data.fan_angle) * 0.5 + virtual_index * angle_step
 
 		# Apply animation or direct placement
-		if appearance.animate:
+		if data.animate:
 			var tween := create_tween()
-			tween.tween_property(node, "position", target_pos, appearance.animation_time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-			tween.tween_property(node, "rotation", target_rot, appearance.animation_time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+			tween.tween_property(node, "position", target_pos, data.animation_time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+			tween.tween_property(node, "rotation", target_rot, data.animation_time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 		else:
 			node.position = target_pos
 			node.rotation = target_rot
@@ -130,20 +149,21 @@ func update_layout() -> void:
 func flip_cards() -> void:
 	for child in get_children():
 		if child.has_method("flip"):
-			child.is_face_up = appearance.is_face_up
+			child.is_face_up = data.is_face_up
 
 
-func set_cards(cards: Array[CardData], cards_appearance: CardAppearanceData) -> void:
+func set_cards(cards: Array[CardData]) -> void:
 	for child in get_children():
 		if child is Card:
 			remove_child(child)
 	for card_data: CardData in cards:
 		var card: Card = card_scene.instantiate()
+		card._data = card_data
 		card.is_face_up = false
-		if !cards_appearance.cards_hidden:
+		if !appearance.cards_hidden:
 			card.init(card_data)
 			card.is_face_up = true
-		card.animate = cards_appearance.is_current_player;
+		card.animate = appearance.is_current_player;
 		add_child(card)
 
 
