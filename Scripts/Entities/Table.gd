@@ -119,3 +119,11 @@ func get_pairs() -> Array:
 
 func get_ghost_data() -> CardData:
 	return ghost_data
+
+func get_ranks_on_table() -> Array:
+	var result := []
+	for pair in pairs:
+		if pair["defense"]:
+			result.append(pair["defense"].rank)
+		result.append(pair["attack"].rank)
+	return result

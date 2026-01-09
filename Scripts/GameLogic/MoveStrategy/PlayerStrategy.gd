@@ -5,7 +5,7 @@ class_name PlayerStrategy
 var card_played: CardData
 var target: Dictionary
 
-func play_move() -> Dictionary:
+func play_move() -> bool:
 	var move: Dictionary
 	if not card_played:
 		move = { }
@@ -19,7 +19,11 @@ func play_move() -> Dictionary:
 			"action": TurnType.Type.DEFENSE,
 			"data": [{"defense": card_played, "index": target["index"]} ]
 		}
-	var result := executor.execute_turn(move)
 	card_played = null
 	target = {}
-	return move
+	var result := false
+	if move:
+		result = executor.execute_turn(move)
+	else:
+		print("Waiting for player!")
+	return result

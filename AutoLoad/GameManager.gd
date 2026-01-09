@@ -20,6 +20,10 @@ var player_defending: Player
 var current_player_index := 0
 var player_defending_index := 0
 
+var FINISH_PLAYER_STATES = [PlayerState.Type.PASS,
+							PlayerState.Type.LEFT,
+							PlayerState.Type.TAKE_CARDS]
+
 ##
 # Creates and initializes players.
 # @param player_count - number of human players
@@ -51,13 +55,13 @@ func notify_players_trump():
 		player.trump = trump
 
 func get_attacking_players(only_previous:=true, only_neigbours:=false) -> Array[Player]:
-	if only_neigbours:
-		return [] # TODO
 	if only_previous:
 		var i := player_defending_index - 1
 		if i < 0:
-			i = len(players) - i
+			i = len(players) - 1
 		return [players[i]]
+	if only_neigbours:
+		return [] # TODO
 	
 	# !!! TODO current functionality also includes players that already won! CHANGE!
 	var result = players.duplicate_deep()
@@ -99,38 +103,61 @@ func update_players_attacking_state():
 func update_attacking_players(only_neighbours:=false):
 	players_attacking = get_attacking_players(only_neighbours)
 
-func start_next_turn():
+func next_defender():
+	print("Next defender invoked!")
 	player_defending_index += 1
-	var player_attacking_index := player_defending_index - 1
 	if player_defending_index >= len(players):
 		player_defending_index = 0
-		player_defending_index = len(players) - 1
 	player_defending = players[player_defending_index]
 	player_defending.state = PlayerState.Type.DEFEND
-	players_attacking = [players[player_attacking_index]]
+
+func next_attackers(only_previous:=true, only_neigbours:=false):
+	players_attacking = get_attacking_players(only_previous, only_neigbours)
 	update_players_attacking_state()
 
-func set_player_state(player: Player, state: PlayerState.Type):
+func invoke_attackers():
+	for player: Player in players_attacking:
+		print(player.play())
+
+func start_next_turn():
+	next_defender()
+	next_attackers()
+	invoke_attackers()
+
+func set_player_state(player: Player, state: PlayerState.Type) -> bool:
+	print(player.type, " ", state)
+	if state == PlayerState.Type.TAKE_CARDS and player != player_defending:
+		return false
+	if state == PlayerState.Type.TAKE_CARDS and all_cards_defended():
+		return false
+	if state == PlayerState.Type.PASS and player == player_defending:
+		return false
 	player.state = state
 	finish_turn()
+	return true
 
+func all_cards_defended() -> bool:
+	if len(table.pairs) <= 0:
+		return false
+	if len(table.get_cards_to_defend()) > 0:
+		return false
+	return true
+	
 func can_finish_turn():
 	for player: Player in players:
-		if player.state not in [PlayerState.Type.PASS,
-								PlayerState.Type.LEFT,
-								PlayerState.Type.TAKE_CARDS]:
-			return false	
+		if player.state == PlayerState.Type.DEFEND and all_cards_defended():
+			continue
+		if player.state not in FINISH_PLAYER_STATES:
+			return false
 	return true
 
 func finish_turn():
-	print("Try finish turn")
 	if not can_finish_turn():
 		return
 		
 	print("Finish turn")
-	
-	for player: Player in players:
-		player.state = PlayerState.Type.IDLE
+	table.clear()
+	start_next_turn()
 
 func notify_defender():
 	player_defending.play()
@@ -139,14 +166,7 @@ func notify_defender():
 func notify_attackers():
 	for player in players_attacking:
 		set_player_state(player, PlayerState.Type.ATTACK)
-	
-func check_defended() -> bool:
-	for pair in table.pairs:
-		if pair["defense"] == null:
-			return false
-	
-	player_defending.state = PlayerState.Type.PASS
-	return true
+	invoke_attackers()
 
 func player_move():
 	current_player.play()
@@ -155,12 +175,16 @@ func play_attack_card(player: Player, card: CardData) -> bool:
 	var success : bool = table.add_attack(player, card)
 	if success:
 		set_player_state(player, PlayerState.Type.ATTACK)
-		notify_defender()
 	return success
 	
 func play_defense_card(player: Player, card: CardData, attack_index: int) -> bool:
 	var success : bool = table.add_defense(player, card, attack_index)
 	if success:
-		notify_attackers()
-		check_defended()
+		all_cards_defended()
 	return success
+
+func notify_players_after_move(player: Player):
+	if player.state == PlayerState.Type.ATTACK:
+		return notify_defender()
+	if player.state == PlayerState.Type.DEFEND:
+		return notify_attackers()

@@ -8,11 +8,13 @@ func _init(owner: Player) -> void:
 
 func parse_attack(turn: Dictionary) -> bool:
 	if turn["action"] != TurnType.Type.ATTACK:
+		print("IS NOT ATTACKING")
 		return false
 	
 	if GameManager.play_attack_card(player, turn["card"]):
 		assert(player.draw_card(turn["card"]))
 		return true
+	print("GAMEMANAGER FALSE")
 	return false
 
 func parse_defense(turn: Dictionary) -> bool:
@@ -28,12 +30,18 @@ func parse_defense(turn: Dictionary) -> bool:
 func parse_pass(turn: Dictionary) -> bool:
 	if turn["action"] != TurnType.Type.PASS:
 		return false
-	return false
+	GameManager.set_player_state(player, PlayerState.Type.PASS)
+	return true
 	
 func parse_take(turn: Dictionary) -> bool:
 	if turn["action"] != TurnType.Type.TAKE_CARDS:
 		return false
 	GameManager.set_player_state(player, PlayerState.Type.TAKE_CARDS)
+	return true
+
+func parse_empty_hand(turn: Dictionary) -> bool:
+	if turn["action"] != TurnType.Type.HAND_EMPTY:
+		return false
 	return true
 
 func execute_turn(turn: Dictionary) -> bool:
@@ -47,5 +55,5 @@ func execute_turn(turn: Dictionary) -> bool:
 		TurnType.Type.TAKE_CARDS:
 			return parse_take(turn)
 		TurnType.Type.HAND_EMPTY:
-			pass
+			return parse_empty_hand(turn)
 	return false

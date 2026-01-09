@@ -19,9 +19,11 @@ var hand: Array[CardData]               ## Cards currently held by the player
 var trump: cd.Suit                      ## Trump suit in cuurent game, used in sort_hand
 
 
-func play() -> Dictionary:
+func play() -> bool:
 	var result := strategy.play_move()
 	move_evoked.emit(id)
+	if result:
+		GameManager.notify_players_after_move(self)
 	return result
 
 ##

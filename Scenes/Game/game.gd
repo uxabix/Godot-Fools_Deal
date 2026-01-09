@@ -19,7 +19,7 @@ const cd = preload("res://Scripts/Utils/card_defines.gd")
 
 @export var deck: Node;
 
-@export var show_enemy_cards: bool = false ## Enable in game drawing of enemy cards faces (Debug)
+@export var show_enemy_cards: bool = true ## Enable in game drawing of enemy cards faces (Debug)
 
 # ------------------------------------------------------------------------------
 # Lifecycle

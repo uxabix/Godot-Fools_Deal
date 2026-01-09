@@ -11,13 +11,13 @@ func _init(owner: Player) -> void:
 	player = owner
 	executor = TurnExecutor.new(player)
 
-func play_move() -> Dictionary:
+func play_move() -> bool:
 	## Play best posible move with current strategy and
-	## return a dictionary describing intended move
+	## return a 
 	## Example:
 	## { "action": "attack", "card": some_card }
 	push_error("BotStrategy.get_move() must be overridden")
-	return {}
+	return false
 
 func get_move() -> Dictionary:
 	## Return a dictionary describing intended move

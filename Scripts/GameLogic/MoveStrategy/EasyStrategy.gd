@@ -6,11 +6,12 @@ class_name EasyStrategy
 ## - Defends with the smallest possible card
 ## - Avoids complex logic
 
-func play_move() -> Dictionary:
+func play_move() -> bool:
 	var move := get_move()
 	var result := executor.execute_turn(move)
 	assert(result, "Can't execute turn! - %s" % move)
-	return move
+	
+	return result
 
 func get_move() -> Dictionary:
 	var hand = player.hand
@@ -25,22 +26,42 @@ func get_move() -> Dictionary:
 
 	return { "action": TurnType.Type.PASS }
 
-
-func _attack(hand: Array[CardData]):
-	var candidates = []
+func _first_attack(hand: Array[CardData]) -> Array[CardData]:
+	var candidates: Array[CardData] = []
 	for c: CardData in hand:
 		if c.suit != GameManager.trump:
 			candidates.append(c)
 
 	if candidates.is_empty():
 		candidates = hand
-
-	candidates.sort_custom(func(a, b): return a.rank_value < b.rank_value)
-
+	
+	return candidates
+	
+func _attack_cards_on_table(hand: Array[CardData]) -> Array[CardData]:
+	var available_ranks := GameManager.table.get_ranks_on_table()
+	var candidates: Array[CardData] = []
+	for card: CardData in hand:
+		if card.rank in available_ranks:
+			candidates.append(card)
+		
+	return candidates
+	
+func _attack(hand: Array[CardData]):
+	var candidates: Array[CardData] = []
+	if len(GameManager.table.pairs) <= 0:
+		candidates = _first_attack(hand)
+	else:
+		candidates = _attack_cards_on_table(hand)
+	sort_cards_by_rank(candidates)
+	if len(candidates) <= 0:
+		return {
+			"action": TurnType.Type.PASS
+		}
 	return {
 		"action": TurnType.Type.ATTACK,
 		"card": candidates[0]
 	}
+	
 
 func sort_cards_by_rank(cards: Array[CardData]) -> void:
 	if cards.is_empty():
