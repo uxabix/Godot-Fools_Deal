@@ -151,9 +151,14 @@ func set_player_state(player: Player, state: PlayerState.Type, ignore_invoking: 
 		return false
 		
 	player.state = state
+	
+	var attack_to_pass := state == PlayerState.Type.PASS and \
+	 player in players_attacking and len(players_attacking) <= 1
+	
+	var defend_to_take := state == PlayerState.Type.TAKE_CARDS
+	
 	if not ignore_invoking and \
-	 state == PlayerState.Type.PASS and \
-	 player in players_attacking and len(players_attacking) <= 1:
+	attack_to_pass or defend_to_take:
 		print("GM.set_player_state: First attacker's transition to PASS, invoking other players. Called by ", player.type, player.id)
 		next_attackers(false, only_neigbours_can_attack, player)
 		print("GM.set_player_state: New attackers: ", players_attacking)
@@ -182,8 +187,20 @@ func finish_turn():
 		return
 		
 	print("GM.finish_turn: Finish turn")
+	take_action()
 	table.clear()
 	start_next_turn()
+
+func take_action() -> bool: # false if defender isn't taking cards
+	if player_defending.state != PlayerState.Type.TAKE_CARDS:
+		return false
+	
+	var pairs := table.get_pairs()
+	for pair in pairs:
+		for card in [pair["defense"], pair["attack"]]:
+			player_defending.add_card(card)
+	return true
+		
 
 func notify_defender():
 	player_defending.play()

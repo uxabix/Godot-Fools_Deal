@@ -53,10 +53,13 @@ func sort_hand() -> void:
 	)
 
 
-func add_card(card: CardData):
+func add_card(card: CardData) -> bool:
+	if card == null:
+		return false
 	hand.append(card)
 	sort_hand()
 	hand_update.emit(id)
+	return true
 	
 func get_cards_count() -> int:
 	return len(hand)
