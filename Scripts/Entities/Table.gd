@@ -50,6 +50,8 @@ func add_defense(player: Player, card: CardData, attack_index: int) -> bool:
 		return false
 	if not ruleset.can_defend(player, card, pairs[attack_index]["attack"]):
 		return false
+	if player.state == PlayerState.Type.TAKE_CARDS:
+		return false
 	pairs[attack_index]["defense"] = card
 	ranks_on_table.append(card.rank)
 	emit_signal("pairs_changed")

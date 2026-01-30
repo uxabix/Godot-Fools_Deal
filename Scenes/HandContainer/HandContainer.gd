@@ -44,8 +44,21 @@ func has_in_hand(to_find: Card) -> int:
 func _update_hand(_player_id):
 	_remove_missing_cards()
 	_add_new_cards()
+	_reorder_cards()
 	call_deferred("_deferred_update_layout")
 
+func _reorder_cards() -> void:
+	for i in range(player.hand.size()):
+		var card_data: CardData = player.hand[i]
+		var card_node := _get_card_node(card_data)
+		if card_node:
+			move_child(card_node, i)
+
+func _get_card_node(card_data: CardData) -> Card:
+	for child in get_children():
+		if child is Card and child._data.equals(card_data):
+			return child
+	return null
 
 func _remove_missing_cards() -> void:
 	for child in get_children():

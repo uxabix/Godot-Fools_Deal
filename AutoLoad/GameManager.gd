@@ -141,7 +141,8 @@ func start_next_turn():
 	invoke_attackers()
 
 func set_player_state(player: Player, state: PlayerState.Type, ignore_invoking: bool = false) -> bool:
-	print("GM.set_player_state: An attempt to change ", player.type, player.id, " state from ", PlayerState.get_state(player.state), " TO ", PlayerState.get_state(state))
+	print("GM.set_player_state: An attempt to change ", player.type, player.id,
+	 " state from ", PlayerState.get_state(player.state), " TO ", PlayerState.get_state(state))
 	if state == PlayerState.Type.TAKE_CARDS and player != player_defending:
 		return false
 	if state == PlayerState.Type.TAKE_CARDS and all_cards_defended():
