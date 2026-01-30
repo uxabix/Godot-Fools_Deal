@@ -17,7 +17,7 @@ class_name HandContainer
 var player: Player = null:
 	set(value):
 		player = value
-		player.move_evoked.connect(_update_hand)
+		player.hand_update.connect(_update_hand)
 
 var card_scene = preload("res://Scenes/Card/card.tscn")
 
@@ -41,13 +41,37 @@ func has_in_hand(to_find: Card) -> int:
 	
 	return -1
 
-func has_in_ui():
-	pass
+func _update_hand(_player_id):
+	_remove_missing_cards()
+	_add_new_cards()
+	call_deferred("_deferred_update_layout")
 
-func _update_hand(id):
+
+func _remove_missing_cards() -> void:
 	for child in get_children():
 		if child is Card and has_in_hand(child) == -1:
-			remove_child(child)
+			child.queue_free()
+
+
+func _add_new_cards() -> void:
+	for card_data: CardData in player.hand:
+		if not _has_card_in_ui(card_data):
+			var card: Card = card_scene.instantiate()
+			card._data = card_data
+			card.is_face_up = false
+			if !appearance.cards_hidden:
+				card.init(card_data)
+				card.is_face_up = true
+			card.animate = appearance.is_current_player
+			add_child(card)
+
+
+func _has_card_in_ui(card_data: CardData) -> bool:
+	for child in get_children():
+		if child is Card and child._data.equals(card_data):
+			return true
+	return false
+
 
 # Respond to editor transformations (for live layout updates)
 func _notification(what: int) -> void:

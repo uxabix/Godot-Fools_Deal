@@ -14,7 +14,8 @@ func parse_attack(turn: Dictionary) -> bool:
 	if GameManager.play_attack_card(player, turn["card"]):
 		assert(player.draw_card(turn["card"]))
 		return true
-	print("GAMEMANAGER FALSE")
+	print("TurnExecutor: parse attack recieved GAMEMANAGER - FALSE; INVOKED BY, ", player.type, player.id)
+	print("TurnExecutor: tried to play", CardData.cd.get_suit_name(turn["card"].suit), " ", CardData.cd.get_rank_name(turn["card"].rank))
 	return false
 
 func parse_defense(turn: Dictionary) -> bool:

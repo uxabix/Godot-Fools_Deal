@@ -1,23 +1,23 @@
-[gd_scene load_steps=3 format=3 uid="uid://b5ltsa1oucaxe"]
+[gd_scene format=3 uid="uid://b5ltsa1oucaxe"]
 
 [ext_resource type="Script" uid="uid://dprq5axr1ch" path="res://Scenes/TableContainer/TableContainer.gd" id="1_jw566"]
 [ext_resource type="PackedScene" uid="uid://dxr7phpxd7qol" path="res://Scenes/Card/card.tscn" id="2_6fnbr"]
 
-[node name="TableContainer" type="Node2D"]
+[node name="TableContainer" type="Node2D" unique_id=1742136893]
 script = ExtResource("1_jw566")
 
-[node name="AttackDropArea" type="Area2D" parent="."]
+[node name="AttackDropArea" type="Area2D" parent="." unique_id=110188797]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackDropArea"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackDropArea" unique_id=520017325]
 
-[node name="AttackContainer" type="Node2D" parent="."]
+[node name="AttackContainer" type="Node2D" parent="." unique_id=339216156]
 
-[node name="DefenseContainer" type="Node2D" parent="."]
+[node name="DefenseContainer" type="Node2D" parent="." unique_id=1656817997]
 
-[node name="TransferGhost" type="Node2D" parent="."]
+[node name="TransferGhost" type="Node2D" parent="." unique_id=1595468685]
 visible = false
 
-[node name="Card" parent="TransferGhost" instance=ExtResource("2_6fnbr")]
+[node name="Card" parent="TransferGhost" unique_id=1833184896 instance=ExtResource("2_6fnbr")]
 modulate = Color(1, 1, 1, 0.5)
 collision = false
 

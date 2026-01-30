@@ -22,8 +22,8 @@ func _init(ruleset):
 	trump = cards[0]
 
 # Draws the top card from the deck
-func draw_card() -> CardData:
-	return null if cards.is_empty() else cards.pop_back() 
+func draw_card() -> Variant:
+	return cards.pop_back() 
 
 # Shuffles the deck
 func shuffle() -> void:

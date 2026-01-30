@@ -54,6 +54,7 @@ func _attack(hand: Array[CardData]):
 		candidates = _attack_cards_on_table(hand)
 	sort_cards_by_rank(candidates)
 	if len(candidates) <= 0:
+		print("EasyStrategy: ", player.type, player.id, " is skipping an attack!")
 		return {
 			"action": TurnType.Type.PASS
 		}

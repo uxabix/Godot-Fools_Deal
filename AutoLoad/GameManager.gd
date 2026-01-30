@@ -16,6 +16,7 @@ var players: Array[Player] = []                ## List of all players (human and
 var current_player: Player
 var players_attacking: Array[Player]
 var player_defending: Player
+var only_neigbours_can_attack = false ## No functionality for true state yet TODO
 
 var current_player_index := 0
 var player_defending_index := 0
@@ -83,56 +84,80 @@ func start_game() -> void:
 	table = Table.new()
 	table_container.table = table
 	table_container.init()
-	
-	# Deal cards to each player
-	for player in players:
-		for i in range(ruleset.cards_in_hand):
-			#if player == current_player:
-				#var attack = CardData.new()
-				#var defense = CardData.new()
-				#defense.rank = cd.Rank.ACE
-				#player.add_card(attack)
-				#player.add_card(defense)
-				#continue
-			player.add_card(deck.draw_card())
+	deal_cards()
 
-func update_players_attacking_state():
+func deal_cards() -> bool: # Return false if deck is empty or deck is not initialized
+	print("GM.deal_cards: called!")
+	if deck == null:
+		print("GM.deal_cards: deck not initialized!")
+		return false
+	# Deal cards to each player
+	var dealing_order = get_attacking_players(true) # First attacker is first to get cards
+	var other_attckers = get_attacking_players(false, only_neigbours_can_attack)
+	other_attckers.erase(dealing_order[0])
+	dealing_order += other_attckers
+	dealing_order.append(player_defending)
+	for player: Player in dealing_order:
+		for i in range(ruleset.cards_in_hand - player.get_cards_count()):
+			if player.get_cards_count() >= ruleset.cards_in_hand:
+				break
+			var card = deck.draw_card()
+			if card == null:
+				return false
+			player.add_card(card)
+	if deck.size() <= 0:
+		return false
+	return true
+
+func update_players_attacking_state(ignore_player : Player = null):
 	for player in players_attacking:
+		if player == ignore_player:
+			continue
 		player.state = PlayerState.Type.ATTACK
-		
-func update_attacking_players(only_neighbours:=false):
-	players_attacking = get_attacking_players(only_neighbours)
 
 func next_defender():
-	print("Next defender invoked!")
+	print("GM.next_defender: Next defender invoked!")
 	player_defending_index += 1
 	if player_defending_index >= len(players):
 		player_defending_index = 0
 	player_defending = players[player_defending_index]
 	player_defending.state = PlayerState.Type.DEFEND
 
-func next_attackers(only_previous:=true, only_neigbours:=false):
+func next_attackers(only_previous:=true, only_neigbours:=false, ignore_player : Player = null):
 	players_attacking = get_attacking_players(only_previous, only_neigbours)
-	update_players_attacking_state()
+	update_players_attacking_state(ignore_player)
 
-func invoke_attackers():
+func invoke_attackers(ignore_player: Player = null):
 	for player: Player in players_attacking:
-		print(player.play())
+		if player == ignore_player:
+			continue
+		var res = player.play()
+		print("GM.invoke_attackers: Invoked attacker ", player.id, ", result:", res)
 
 func start_next_turn():
+	deal_cards()
 	next_defender()
 	next_attackers()
 	invoke_attackers()
 
-func set_player_state(player: Player, state: PlayerState.Type) -> bool:
-	print(player.type, " ", state)
+func set_player_state(player: Player, state: PlayerState.Type, ignore_invoking: bool = false) -> bool:
+	print("GM.set_player_state: An attempt to change ", player.type, player.id, " state from ", PlayerState.get_state(player.state), " TO ", PlayerState.get_state(state))
 	if state == PlayerState.Type.TAKE_CARDS and player != player_defending:
 		return false
 	if state == PlayerState.Type.TAKE_CARDS and all_cards_defended():
 		return false
 	if state == PlayerState.Type.PASS and player == player_defending:
 		return false
+		
 	player.state = state
+	if not ignore_invoking and \
+	 state == PlayerState.Type.PASS and \
+	 player in players_attacking and len(players_attacking) <= 1:
+		print("GM.set_player_state: First attacker's transition to PASS, invoking other players. Called by ", player.type, player.id)
+		next_attackers(false, only_neigbours_can_attack, player)
+		print("GM.set_player_state: New attackers: ", players_attacking)
+		invoke_attackers(player)
+		
 	finish_turn()
 	return true
 
@@ -155,7 +180,7 @@ func finish_turn():
 	if not can_finish_turn():
 		return
 		
-	print("Finish turn")
+	print("GM.finish_turn: Finish turn")
 	table.clear()
 	start_next_turn()
 
@@ -188,3 +213,7 @@ func notify_players_after_move(player: Player):
 		return notify_defender()
 	if player.state == PlayerState.Type.DEFEND:
 		return notify_attackers()
+		
+func print_states():
+	for p in players:
+		print("GM.print_states: Player state! ", p.type, p.id, " ", PlayerState.get_state(p.state))

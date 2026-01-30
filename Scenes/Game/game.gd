@@ -103,3 +103,4 @@ func _on_turn_button_pressed() -> void:
 		GameManager.set_player_state(GameManager.current_player, PlayerState.Type.TAKE_CARDS)
 	
 	update_players_state()
+	GameManager.print_states()

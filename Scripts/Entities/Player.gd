@@ -1,7 +1,7 @@
 extends Node
 class_name Player
 
-signal move_evoked(player_id: int)
+signal hand_update(player_id: int)
 
 ##
 # Represents a player entity in the game.
@@ -14,14 +14,14 @@ var player_name: String                 ## Player display name
 var id                                  ## Player unique identifier
 var type                                ## Type of player (human, AI, etc.) # TODO Replace strings with an enum
 var state: PlayerState.Type = PlayerState.Type.IDLE ## Current player state (IDLE, ATTACK, DEFEND, ...)
-var strategy: MoveStrategy               ## Move strategy logic
+var strategy: MoveStrategy              ## Move strategy logic
 var hand: Array[CardData]               ## Cards currently held by the player
 var trump: cd.Suit                      ## Trump suit in cuurent game, used in sort_hand
 
 
 func play() -> bool:
 	var result := strategy.play_move()
-	move_evoked.emit(id)
+	hand_update.emit(id)
 	if result:
 		GameManager.notify_players_after_move(self)
 	return result
@@ -56,6 +56,10 @@ func sort_hand() -> void:
 func add_card(card: CardData):
 	hand.append(card)
 	sort_hand()
+	hand_update.emit(id)
+	
+func get_cards_count() -> int:
+	return len(hand)
 	
 func draw_card(card: CardData) -> bool:
 	for c_i in len(hand):
