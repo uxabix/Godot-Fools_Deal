@@ -61,7 +61,7 @@ func can_attack(player: Player, card: CardData, pairs: int, max_pairs_this_turn:
 		return false
 	
 	return true
-	
+
 ##
 # Determines if a card can be played as a defense in the current context.
 ##

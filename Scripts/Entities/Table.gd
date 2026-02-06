@@ -32,7 +32,7 @@ func _init() -> void:
 # ---------------------- Attack / Defense ----------------------
 # player param is required so ruleset.can_attack/can_defend can use it.
 func add_attack(player: Player, card: CardData) -> bool:
-	if not ruleset.can_attack(player, card, len(pairs), max_pairs, ranks_on_table):
+	if not ruleset.can_attack(player, card, len(pairs), GameManager.max_pairs_this_turn, ranks_on_table):
 		return false
 	if is_full():
 		return false
@@ -44,7 +44,7 @@ func add_attack(player: Player, card: CardData) -> bool:
 	return true
 
 func is_full() -> bool:
-	return pairs.size() >= max_pairs
+	return pairs.size() >= max_pairs or pairs.size() >= GameManager.max_pairs_this_turn
 
 func add_defense(player: Player, card: CardData, attack_index: int) -> bool:
 	if attack_index < 0 or attack_index >= pairs.size():

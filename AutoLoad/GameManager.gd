@@ -21,6 +21,9 @@ var only_neigbours_can_attack = false ## No functionality for true state yet TOD
 var current_player_index := 0
 var player_defending_index := 0
 
+var max_pairs_this_turn: int = 0
+var is_first_turn: bool = true
+
 var FINISH_PLAYER_STATES = [PlayerState.Type.PASS,
 							PlayerState.Type.LEFT,
 							PlayerState.Type.TAKE_CARDS]
@@ -74,9 +77,9 @@ func get_attacking_players(only_previous:=true, only_neigbours:=false) -> Array[
 # Initializes players, deck, ruleset, and deals cards.
 ##
 func start_game() -> void:
+	is_first_turn = true
 	set_players(ruleset.common_options.players_count, ruleset.common_options.bot_count)
 	current_player = players[current_player_index]
-	start_next_turn()
 	deck = Deck.new(ruleset)
 	trump = deck.trump.suit
 	notify_players_trump()
@@ -84,7 +87,7 @@ func start_game() -> void:
 	table = Table.new()
 	table_container.table = table
 	table_container.init()
-	deal_cards()
+	start_next_turn()
 
 func deal_cards() -> bool: # Return false if deck is empty or deck is not initialized
 	print("GM.deal_cards: called!")
@@ -93,10 +96,14 @@ func deal_cards() -> bool: # Return false if deck is empty or deck is not initia
 		return false
 	# Deal cards to each player
 	var dealing_order = get_attacking_players(true) # First attacker is first to get cards
-	var other_attckers = get_attacking_players(false, only_neigbours_can_attack)
-	other_attckers.erase(dealing_order[0])
-	dealing_order += other_attckers
-	dealing_order.append(player_defending)
+	var other_attackers = get_attacking_players(false, only_neigbours_can_attack)
+	if null not in other_attackers:
+		other_attackers.erase(dealing_order[0])
+		dealing_order += other_attackers
+	if player_defending != null:
+		dealing_order.append(player_defending)
+	if is_first_turn:
+		dealing_order = players
 	for player: Player in dealing_order:
 		for i in range(ruleset.cards_in_hand - player.get_cards_count()):
 			if player.get_cards_count() >= ruleset.cards_in_hand:
@@ -141,6 +148,14 @@ func start_next_turn():
 	deal_cards()
 	next_defender()
 	next_attackers()
+	if is_first_turn:
+		is_first_turn = false
+		max_pairs_this_turn = player_defending.get_cards_count() - 1
+	else:
+		max_pairs_this_turn = player_defending.get_cards_count() \
+		 if player_defending.get_cards_count() < table.max_pairs \
+		 else table.max_pairs
+	print("GM.start_next_turn: Max pairs this turn: ", max_pairs_this_turn)
 	invoke_attackers()
 
 func set_player_state(player: Player, state: PlayerState.Type, ignore_invoking: bool = false) -> bool:
@@ -156,7 +171,7 @@ func set_player_state(player: Player, state: PlayerState.Type, ignore_invoking: 
 	player.state = state
 	
 	var attack_to_pass := state == PlayerState.Type.PASS and \
-	 player in players_attacking and len(players_attacking) <= 1
+	 player in players_attacking and len(players_attacking) <= 1 and len(players) > 2
 	
 	var defend_to_take := state == PlayerState.Type.TAKE_CARDS
 	
