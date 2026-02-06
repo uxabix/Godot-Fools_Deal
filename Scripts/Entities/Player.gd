@@ -1,12 +1,12 @@
 extends Node
 class_name Player
 
-signal hand_update(player_id: int)
-
 ##
 # Represents a player entity in the game.
 # Holds player-related data such as hand, state, and strategy.
 ##
+
+signal hand_update(player_id: int)
 
 const cd = preload("res://Scripts/Utils/card_defines.gd")
 

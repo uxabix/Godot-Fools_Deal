@@ -75,7 +75,7 @@ func update_players_state():
 
 # Called once when the node enters the scene tree
 func _ready() -> void:
-	DelayService.set_tree(get_tree())
+	DelayService.set_tree(get_tree()) # Update Delay Service with current scene tree
 	
 	GameManager.table_container = $CanvasLayer/ContainerControl/TableContainer
 	UIManager.remove_preview_nodes(self)
@@ -86,7 +86,8 @@ func _ready() -> void:
 	$CanvasLayer/PlayerHand/HandContainer.appearance = player_card_appearance
 	$CanvasLayer/PlayerHand/HandContainer.player = GameManager.current_player
 	#
-	deck.update_deck(GameManager.deck)
+	deck.deck = GameManager.deck # Set a reference to a logical deck entity
+	deck.update_deck()
 	$CanvasLayer/PlayerHand/HandContainer.set_cards(GameManager.current_player.hand)
 	draw_players()
 	update_players_state()

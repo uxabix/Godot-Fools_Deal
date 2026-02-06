@@ -6,6 +6,8 @@ class_name Deck
 # Responsible for storing, shuffling, and drawing cards.
 ##
 
+signal deck_update()
+
 var cards: Array[CardData] = []
 var trump: CardData;
 
@@ -23,7 +25,9 @@ func _init(ruleset):
 
 # Draws the top card from the deck
 func draw_card() -> Variant:
-	return cards.pop_back() 
+	var res = cards.pop_back() 
+	deck_update.emit()
+	return res
 
 # Shuffles the deck
 func shuffle() -> void:

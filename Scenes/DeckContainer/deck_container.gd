@@ -6,7 +6,10 @@ const cd = preload("res://Scripts/Utils/card_defines.gd")
 
 # Reference to the scene representing a single card (used to instantiate deck cards)
 @export var card_scene: PackedScene = preload("res://Scenes/Card/card.tscn")
-
+var deck: Deck = null:
+	set(value):
+		deck = value
+		deck.deck_update.connect(update_deck)
 
 # ------------------------------------------------------------------------------
 # Deck Management
@@ -21,7 +24,7 @@ func clear_deck() -> void:
 		if child is Card:
 			child.queue_free()
 
-func update_trump(deck: Deck) -> void:
+func update_trump() -> void:
 	$TrumpContainer/TrumpSuit.texture = load(cd.get_suit_image(deck.trump.suit))
 	if len(deck.cards) <= 0:
 		return
@@ -30,7 +33,7 @@ func update_trump(deck: Deck) -> void:
 	trump.init(deck.trump)
 	$TrumpContainer.add_child(trump)
 
-func update_cards(deck: Deck) -> void:
+func update_cards() -> void:
 	# Visually stack the remaining cards with slight offset and rotation
 	var angle := 0.0
 	var pos := 0.0
@@ -48,17 +51,17 @@ func update_cards(deck: Deck) -> void:
 		card.position = Vector2(pos, pos)
 
 # Updates the deck display based on the provided Deck object
-func update_deck(deck: Deck) -> void:
+func update_deck() -> void:
 	clear_deck()
 	# Update deck card count label
 	$CardsCount.text = str(deck.size()) if deck.size() != 0 else ""
 
 	# Create and display the trump card (top of the deck)
-	update_trump(deck)
+	update_trump()
 	
 	if len(deck.cards) <= 0:
 		return
-	update_cards(deck)
+	update_cards()
 
 
 
