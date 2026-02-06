@@ -116,10 +116,13 @@ func update_players_attacking_state(ignore_player : Player = null):
 		player.state = PlayerState.Type.ATTACK
 
 func next_defender():
-	print("GM.next_defender: Next defender invoked!")
+	print("GM.next_defender: Next defender invoked.")
+	if player_defending and player_defending.state == PlayerState.Type.TAKE_CARDS:
+		print("GM.next_defende: Take detected, skipping one player!")
+		player_defending_index += 1
 	player_defending_index += 1
 	if player_defending_index >= len(players):
-		player_defending_index = 0
+		player_defending_index = player_defending_index % len(players)
 	player_defending = players[player_defending_index]
 	player_defending.state = PlayerState.Type.DEFEND
 
