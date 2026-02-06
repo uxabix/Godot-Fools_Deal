@@ -34,7 +34,7 @@ func _init() -> void:
 func add_attack(player: Player, card: CardData) -> bool:
 	if not ruleset.can_attack(player, card, len(pairs), max_pairs, ranks_on_table):
 		return false
-	if pairs.size() >= max_pairs:
+	if is_full():
 		return false
 	pairs.append({ "attack": card, "defense": null })
 	ranks_on_table.append(card.rank)
@@ -42,6 +42,9 @@ func add_attack(player: Player, card: CardData) -> bool:
 	emit_signal("ghost_changed")
 	on_any_change("Add attack")
 	return true
+
+func is_full() -> bool:
+	return pairs.size() >= max_pairs
 
 func add_defense(player: Player, card: CardData, attack_index: int) -> bool:
 	if attack_index < 0 or attack_index >= pairs.size():

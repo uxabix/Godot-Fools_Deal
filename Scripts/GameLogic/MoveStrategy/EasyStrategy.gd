@@ -54,7 +54,7 @@ func _attack(hand: Array[CardData]):
 	else:
 		candidates = _attack_cards_on_table(hand)
 	sort_cards_by_rank(candidates)
-	if len(candidates) <= 0:
+	if len(candidates) <= 0 or GameManager.table.is_full():
 		print("EasyStrategy: ", player.type, player.id, " is skipping an attack!")
 		return {
 			"action": TurnType.Type.PASS
