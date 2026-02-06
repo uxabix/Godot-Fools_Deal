@@ -131,7 +131,7 @@ func invoke_attackers(ignore_player: Player = null):
 	for player: Player in players_attacking:
 		if player == ignore_player:
 			continue
-		var res = player.play()
+		var res = await player.play()
 		print("GM.invoke_attackers: Invoked attacker ", player.id, ", result:", res)
 
 func start_next_turn():

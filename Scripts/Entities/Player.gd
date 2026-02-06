@@ -20,7 +20,7 @@ var trump: cd.Suit                      ## Trump suit in cuurent game, used in s
 
 
 func play() -> bool:
-	var result := strategy.play_move()
+	var result := await strategy.play_move()
 	hand_update.emit(id)
 	if result:
 		GameManager.notify_players_after_move(self)

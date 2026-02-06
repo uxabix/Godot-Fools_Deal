@@ -7,6 +7,7 @@ class_name EasyStrategy
 ## - Avoids complex logic
 
 func play_move() -> bool:
+	await DelayService.wait(randf_range(.25, 1.2))
 	var move := get_move()
 	var result := executor.execute_turn(move)
 	assert(result, "Can't execute turn! - %s" % move)

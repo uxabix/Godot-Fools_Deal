@@ -36,7 +36,7 @@ scale = Vector2(0.75, -0.75)
 
 [node name="PreviewHandContainer7" parent="CanvasLayer/EnemyContainer/EnemyHandContainer" unique_id=1422828109 instance=ExtResource("4_i1e5p")]
 position = Vector2(307.2, 0)
-scale = Vector2(0.6373591, 0.6373591)
+scale = Vector2(0.6580998, 0.6580998)
 data = SubResource("Resource_xfil1")
 
 [node name="PreviewTrump2" parent="CanvasLayer/EnemyContainer/EnemyHandContainer/PreviewHandContainer7" unique_id=1666523151 instance=ExtResource("1_mv0hc")]
@@ -87,7 +87,7 @@ animate = true
 
 [node name="PreviewHandContainer8" parent="CanvasLayer/EnemyContainer/EnemyHandContainer" unique_id=1439338542 instance=ExtResource("4_i1e5p")]
 position = Vector2(614.4, 0)
-scale = Vector2(0.6373591, 0.6373591)
+scale = Vector2(0.6580998, 0.6580998)
 data = SubResource("Resource_xfil1")
 
 [node name="PreviewTrump2" parent="CanvasLayer/EnemyContainer/EnemyHandContainer/PreviewHandContainer8" unique_id=1906095660 instance=ExtResource("1_mv0hc")]
@@ -138,7 +138,7 @@ animate = true
 
 [node name="PreviewHandContainer10" parent="CanvasLayer/EnemyContainer/EnemyHandContainer" unique_id=413987261 instance=ExtResource("4_i1e5p")]
 position = Vector2(921.6, 0)
-scale = Vector2(0.6373591, 0.6373591)
+scale = Vector2(0.6580998, 0.6580998)
 data = SubResource("Resource_xfil1")
 
 [node name="PreviewTrump2" parent="CanvasLayer/EnemyContainer/EnemyHandContainer/PreviewHandContainer10" unique_id=1745301222 instance=ExtResource("1_mv0hc")]
@@ -189,7 +189,7 @@ animate = true
 
 [node name="PreviewHandContainer11" parent="CanvasLayer/EnemyContainer/EnemyHandContainer" unique_id=819657802 instance=ExtResource("4_i1e5p")]
 position = Vector2(1228.8, 0)
-scale = Vector2(0.6373591, 0.6373591)
+scale = Vector2(0.6580998, 0.6580998)
 data = SubResource("Resource_xfil1")
 
 [node name="PreviewTrump2" parent="CanvasLayer/EnemyContainer/EnemyHandContainer/PreviewHandContainer11" unique_id=2036125296 instance=ExtResource("1_mv0hc")]

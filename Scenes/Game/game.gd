@@ -75,6 +75,8 @@ func update_players_state():
 
 # Called once when the node enters the scene tree
 func _ready() -> void:
+	DelayService.set_tree(get_tree())
+	
 	GameManager.table_container = $CanvasLayer/ContainerControl/TableContainer
 	UIManager.remove_preview_nodes(self)
 	UIManager.player_hand = $CanvasLayer/PlayerHand/HandContainer
